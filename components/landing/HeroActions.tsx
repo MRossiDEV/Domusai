@@ -7,7 +7,8 @@ export default function HeroActions() {
 
       <Link
         href="/wizard"
-        className="
+        className=" 
+        rounded-md
         inline-flex
         items-center
         justify-center

@@ -5,7 +5,7 @@ export default function HeroBadge() {
       <div className="h-px w-14 bg-[#d7c3a0]" />
 
       <span className="text-xs uppercase tracking-[0.45em] text-white/70">
-        Inteligencia Inmobiliaria · Experiencias Excepcionales
+        Inteligencia · Experiencia · Confianza
       </span>
 
     </div>

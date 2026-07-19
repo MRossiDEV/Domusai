@@ -65,7 +65,7 @@ export default function Header() {
 
           {/* Desktop */}
 
-          <nav className="hidden items-center gap-10 lg:flex">
+          <nav className="hidden items-center gap-10 lg:flex mr-8">
             {navigation.map((item) => (
               <Link
                 key={item.label}
@@ -82,7 +82,7 @@ export default function Header() {
           <div className="hidden lg:block">
             <Button
               size="lg"
-              className="rounded-none bg-[#d9c2a0] px-8 py-7 text-xs font-semibold uppercase tracking-[0.15em] text-black transition hover:bg-[#e6d2b5]"
+              className="rounded-md bg-[#d9c2a0] px-8 py-7 text-xs font-semibold uppercase tracking-[0.15em] text-black transition hover:bg-[#e6d2b5]"
             >
               Consulta Privada
             </Button>

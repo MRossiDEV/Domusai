@@ -6,7 +6,7 @@ import HeroActions from "./HeroActions";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden">
+    <section className="relative flex min-h-screen items-center overflow-hidden pb-10">
       {/* Background */}
 
       <Image
@@ -32,10 +32,12 @@ export default function Hero() {
           <h1 className="mt-10 font-serif text-6xl font-light leading-[1.05] text-white md:text-7xl xl:text-8xl">
               Mas que de <span className="text-[#909090]">propiedades</span>
             <br />
-             Entendemos tu forma de <span className="text-[#909090]">vida</span>.
+            Entendemos <span className="text-[#909090] italic">tu</span>
+            <br />
+            forma de <span className="text-[#909090]">vida</span>.
           </h1>
 
-          <div className="mt-10 h-px w-24 bg-[#d7c3a0]" />
+          {/* <div className="mt-10 h-px w-24 bg-[#d7c3a0]" /> */}
 
           <p className="mt-10 max-w-xl text-lg leading-8 text-white/80">
             Domusai entiende tus necesidades y encuentra
@@ -52,7 +54,7 @@ export default function Hero() {
 
       {/* Scroll Indicator */}
 
-      <Link
+      {/* <Link
         href="#proceso"
         className="absolute bottom-10 left-1/2 -translate-x-1/2"
       >
@@ -69,7 +71,7 @@ export default function Hero() {
           </div>
 
         </div>
-      </Link>
+      </Link> */}
 
     </section>
   );
