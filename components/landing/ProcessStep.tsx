@@ -1,6 +1,6 @@
 type Props = {
   number: string;
-  icon?: string;
+  icon?: any;
   title: string;
   description: string;
 };
