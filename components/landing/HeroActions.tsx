@@ -15,7 +15,7 @@ export default function HeroActions() {
         bg-[#d7c3a0]
         px-9
         py-5
-        text-sm
+        text-xs
         font-semibold
         uppercase
         tracking-[0.25em]

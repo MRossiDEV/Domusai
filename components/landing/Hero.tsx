@@ -29,7 +29,7 @@ export default function Hero() {
 
           <HeroBadge />
 
-          <h1 className="mt-10 font-serif text-6xl font-light leading-[1.05] text-white md:text-7xl xl:text-8xl">
+          <h1 className="mt-10 font-serif text-5xl font-light leading-[1.05] text-white md:text-6xl xl:text-7xl">
               Mas que de <span className="text-[#909090]">propiedades</span>
             <br />
             Entendemos <span className="text-[#909090] italic">tu</span>
@@ -52,26 +52,7 @@ export default function Hero() {
 
       </Container>
 
-      {/* Scroll Indicator */}
 
-      {/* <Link
-        href="#proceso"
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
-      >
-        <div className="flex flex-col items-center gap-3">
-
-          <span className="text-[11px] uppercase tracking-[0.35em] text-white/70">
-            Descubrir
-          </span>
-
-          <div className="flex h-12 w-7 justify-center rounded-full border border-white/40">
-
-            <div className="mt-2 h-2 w-2 rounded-full bg-white animate-bounce" />
-
-          </div>
-
-        </div>
-      </Link> */}
 
     </section>
   );
