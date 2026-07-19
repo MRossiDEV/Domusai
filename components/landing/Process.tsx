@@ -14,7 +14,7 @@ const steps = [
   },
   {
     number: "02",
-    title: "Analizamos",
+    title: "Entendemos",
     icon: <Brain />,
     description:
       "Nuestra inteligencia analiza tus respuestas y encuentra propiedades que realmente se alinean con tu perfil.",

@@ -29,6 +29,7 @@ export default function FinalCTA() {
           <Link
             href="/wizard"
             className="
+              rounded-md
               mt-14
               inline-flex
               bg-black
