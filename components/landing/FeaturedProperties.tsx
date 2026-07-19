@@ -25,6 +25,13 @@ const properties = [
     price: "USD 3.250.000",
     specs: "4 Dormitorios • Vista al Mar • 510 m²",
   },
+  {
+    image: "/images/property-4.png",
+    city: "La Barra",
+    title: "Villa Moderna con Piscina",
+    price: "USD 2.450.000",
+    specs: "4 Dormitorios • 4 Baños • 480 m²",
+  }
 ];
 
 export default function FeaturedProperties() {
@@ -41,17 +48,16 @@ export default function FeaturedProperties() {
           description="Cada propiedad ha sido seleccionada por su calidad arquitectónica, ubicación y potencial. Esto no es un catálogo; es una muestra del nivel de oportunidades que Domusai representa."
         />
 
-        <div className="mt-20 grid gap-8 lg:grid-cols-12">
+        <div className="mt-20 flex flex-col">
 
-          <div className="lg:col-span-7">
+          <div className="w-full ">
             <PropertyCard featured {...properties[0]} />
           </div>
 
-          <div className="space-y-8 lg:col-span-5">
-
-            <PropertyCard featured {...properties[1]} />
-
-            <PropertyCard featured {...properties[2]} />
+          <div className="flex flex-row justify-between gap-6 mt-6">
+            <PropertyCard {...properties[1]} />
+            <PropertyCard  {...properties[2]} />
+            <PropertyCard  {...properties[3]} />
 
           </div>
 

@@ -40,7 +40,7 @@ export default function Hero() {
           {/* <div className="mt-10 h-px w-24 bg-[#d7c3a0]" /> */}
 
           <p className="mt-10 max-w-xl text-lg leading-8 text-white/80">
-            Domusai entiende tus necesidades y encuentra
+            DOMUSAI entiende tus necesidades y encuentra
             propiedades excepcionales alineadas con tu
             estilo de vida mediante una experiencia
             privada y personalizada.

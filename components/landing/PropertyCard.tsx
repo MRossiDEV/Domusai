@@ -29,7 +29,7 @@ export default function PropertyCard({
         ${
           featured
             ? "h-[720px]"
-            : "h-[350px]"
+            : "h-[600px] w-[400px]"
         }
       `}
     >
