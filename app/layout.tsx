@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 
+import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister"
+
 
 
 const geistSans = Geist({
@@ -33,7 +35,7 @@ const geistMono = Geist_Mono({
 export const viewport: Viewport = {
 
   themeColor:
-    "#F8F7F3",
+    "#111111",
 
   width:
     "device-width",
@@ -43,6 +45,9 @@ export const viewport: Viewport = {
 
   maximumScale:
     1,
+
+  userScalable:
+    false,
 
   viewportFit:
     "cover",
@@ -177,6 +182,47 @@ export const metadata: Metadata = {
 
 
 
+  other: {
+
+    "mobile-web-app-capable":
+      "yes",
+
+  },
+
+
+
+  icons: {
+
+    icon: [
+
+      {
+        url: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+
+      {
+        url: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+
+    ],
+
+    apple: [
+
+      {
+        url: "/apple-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+
+    ],
+
+  },
+
+
+
   formatDetection: {
 
     telephone:
@@ -295,13 +341,15 @@ export default function RootLayout({
         className="
           min-h-screen
           overflow-x-hidden
-          bg-[#F8F7F3]
-          text-neutral-950
+          bg-[#111111]
+          text-[#F5F1E8]
         "
 
       >
 
         {children}
+
+        <ServiceWorkerRegister />
 
       </body>
 

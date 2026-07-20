@@ -13,18 +13,24 @@ export default function manifest(): MetadataRoute.Manifest {
       "Una experiencia personalizada para encontrar propiedades alineadas con tu estilo de vida.",
 
 
-    start_url: "/wizard",
+    id: "/",
+
+
+    start_url: "/",
+
+
+    scope: "/",
 
 
     display: "standalone",
 
 
     background_color:
-      "#F8F7F3",
+      "#111111",
 
 
     theme_color:
-      "#F8F7F3",
+      "#111111",
 
 
     lang:
@@ -39,15 +45,6 @@ export default function manifest(): MetadataRoute.Manifest {
       "real-estate",
       "business",
       "lifestyle"
-    ],
-
-
-    screenshots: [
-      {
-        src: "/screenshots/mobile-home.png",
-        sizes: "1080x1920",
-        type: "image/png"
-      }
     ],
 
 
