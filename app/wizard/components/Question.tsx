@@ -2,11 +2,16 @@
 
 import { useMemo } from "react"
 
+import {
+  motion
+} from "framer-motion"
+
 import OptionCard from "./OptionCard"
 
 import type {
   WizardQuestion
 } from "../types"
+
 
 
 interface QuestionProps {
@@ -65,6 +70,7 @@ export default function Question({
 
 
 
+
   function handleOptionSelect(
     optionValue: string
   ) {
@@ -74,75 +80,98 @@ export default function Question({
       question.type === "multiple"
     ) {
 
-      const current =
-        selectedValues
 
-
-      const exists =
-        current.includes(
+      const updated =
+        selectedValues.includes(
           optionValue
         )
 
-
-      const updated =
-        exists
-
-          ? current.filter(
+          ? selectedValues.filter(
               item =>
                 item !== optionValue
             )
 
           : [
-              ...current,
+              ...selectedValues,
               optionValue
             ]
 
 
-      onChange(updated)
+      onChange(
+        updated
+      )
+
 
       return
 
     }
 
 
-
-    onChange(optionValue)
+    onChange(
+      optionValue
+    )
 
   }
 
 
 
+
   return (
 
-    <div
+    <motion.div
+
+      initial={{
+        opacity:0,
+        y:20
+      }}
+
+      animate={{
+        opacity:1,
+        y:0
+      }}
+
+      transition={{
+        duration:0.45,
+        ease:"easeOut"
+      }}
+
       className="
         flex
         h-full
         flex-col
-        px-6
       "
+
     >
 
 
+
       <div
+
         className="
-          pt-10
-          pb-8
+          px-6
+          pt-8
+          pb-6
         "
+
       >
+
 
         {
           question.category && (
 
             <span
+
               className="
-                text-xs
+                text-[10px]
                 uppercase
-                tracking-[0.25em]
+                tracking-[0.35em]
                 text-neutral-400
               "
+
             >
+
               {question.category}
+
             </span>
 
           )
@@ -151,18 +180,23 @@ export default function Question({
 
 
         <h1
+
           className="
-            mt-5
-            max-w-xl
-            text-3xl
-            font-medium
-            leading-tight
-            tracking-tight
+            mt-6
+            max-w-lg
+            text-[34px]
+            font-light
+            leading-[1.12]
+            tracking-[-0.04em]
             text-neutral-950
           "
+
         >
+
           {question.title}
+
         </h1>
+
 
 
 
@@ -170,68 +204,110 @@ export default function Question({
           question.subtitle && (
 
             <p
+
               className="
-                mt-4
-                max-w-xl
-                text-base
+                mt-5
+                max-w-md
+                text-[16px]
                 leading-relaxed
                 text-neutral-500
               "
+
             >
+
               {question.subtitle}
+
             </p>
 
           )
         }
 
 
+
       </div>
 
 
 
+
+
       <div
+
         className="
           flex-1
-          space-y-3
           overflow-y-auto
-          pb-32
+          px-6
+          pb-36
+          pt-2
+          scrollbar-none
         "
+
       >
 
 
         {
-          question.options?.map(
-            option => (
+          question.options && (
 
-              <OptionCard
+            <motion.div
 
-                key={
-                  option.value
-                }
+              initial={{
+                opacity:0
+              }}
 
-                option={
-                  option
-                }
+              animate={{
+                opacity:1
+              }}
 
-                selected={
-                  selectedValues.includes(
-                    option.value
+              transition={{
+                delay:0.1
+              }}
+
+              className="
+                space-y-3
+              "
+
+            >
+
+              {
+                question.options.map(
+                  option => (
+
+                    <OptionCard
+
+                      key={
+                        option.value
+                      }
+
+                      option={
+                        option
+                      }
+
+                      selected={
+                        selectedValues.includes(
+                          option.value
+                        )
+                      }
+
+                      multiple={
+                        question.type === "multiple"
+                      }
+
+                      onSelect={
+                        handleOptionSelect
+                      }
+
+                    />
+
                   )
-                }
+                )
+              }
 
-                multiple={
-                  question.type === "multiple"
-                }
 
-                onSelect={
-                  handleOptionSelect
-                }
+            </motion.div>
 
-              />
-
-            )
           )
         }
+
+
 
 
 
@@ -242,11 +318,13 @@ export default function Question({
           ) && (
 
             <textarea
+
               value={
                 String(
                   value ?? ""
                 )
               }
+
 
               onChange={
                 event =>
@@ -255,23 +333,46 @@ export default function Question({
                   )
               }
 
+
               placeholder={
                 question.placeholder
               }
 
+
               className="
-                min-h-40
+
+                min-h-[180px]
+
                 w-full
+
                 resize-none
-                rounded-2xl
+
+                rounded-[24px]
+
                 border
-                border-neutral-200
-                bg-white
-                p-5
+
+                border-[#E7E3DA]
+
+                bg-white/80
+
+                p-6
+
                 text-base
+
+                leading-relaxed
+
+                text-neutral-900
+
+                shadow-[0_4px_20px_rgba(0,0,0,0.03)]
+
                 outline-none
+
                 transition
+
+                placeholder:text-neutral-400
+
                 focus:border-neutral-900
+
               "
 
             />
@@ -283,7 +384,8 @@ export default function Question({
       </div>
 
 
-    </div>
+
+    </motion.div>
 
   )
 

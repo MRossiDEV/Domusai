@@ -2,7 +2,14 @@
 
 import { motion } from "framer-motion"
 
-import type { WizardOption } from "../types"
+import {
+  Check
+} from "lucide-react"
+
+import type {
+  WizardOption
+} from "../types"
+
 
 
 interface OptionCardProps {
@@ -22,10 +29,15 @@ interface OptionCardProps {
 
 
 export default function OptionCard({
+
   option,
+
   selected,
+
   multiple = false,
+
   onSelect
+
 }: OptionCardProps) {
 
 
@@ -47,102 +59,237 @@ export default function OptionCard({
 
       animate={{
 
-        scale:
+        y:
           selected
-            ? 1.01
-            : 1
+            ? -3
+            : 0,
 
       }}
 
 
       transition={{
-        duration: 0.2
+
+        duration:
+          0.25,
+
+        ease:
+          "easeOut"
+
       }}
 
 
       className={`
+
+        group
+
         relative
+
+        flex
+
+        min-h-[82px]
+
         w-full
-        text-left
-        rounded-2xl
+
+        items-center
+
+        overflow-hidden
+
+        rounded-[24px]
+
         border
-        px-6
+
+        px-5
+
         py-5
+
+        text-left
+
         transition-all
+
         duration-300
+
+
         ${
           selected
-            ? "border-black bg-black text-white"
-            : "border-neutral-200 bg-white text-neutral-900"
+
+            ? `
+
+              border-[#C8AD7F]
+
+              bg-[#242019]
+
+              text-[#F5F1E8]
+
+              shadow-[0_18px_45px_rgba(0,0,0,0.45)]
+
+            `
+
+            :
+
+            `
+
+              border-white/[0.08]
+
+              bg-[#181818]
+
+              text-[#F5F1E8]
+
+              shadow-[0_8px_25px_rgba(0,0,0,0.25)]
+
+              hover:border-white/[0.18]
+
+            `
+
         }
+
       `}
 
     >
 
-      <div className="flex items-start gap-4">
+
+
+      {
+        selected && (
+
+          <motion.div
+
+            initial={{
+              opacity:0
+            }}
+
+            animate={{
+              opacity:1
+            }}
+
+            className="
+
+              absolute
+
+              inset-0
+
+              bg-gradient-to-r
+
+              from-[#C8AD7F]/10
+
+              via-transparent
+
+              to-transparent
+
+              pointer-events-none
+
+            "
+
+          />
+
+        )
+      }
+
+
+
+
+
+      <div
+
+        className="
+
+          relative
+
+          z-10
+
+          flex
+
+          w-full
+
+          items-center
+
+          gap-4
+
+        "
+
+      >
+
+
 
 
         {
           option.icon && (
 
-            <span
-              className="
-                text-xl
-                opacity-80
-              "
+            <div
+
+              className={`
+
+                flex
+
+                h-11
+
+                w-11
+
+                shrink-0
+
+                items-center
+
+                justify-center
+
+                rounded-full
+
+
+                ${
+                  selected
+
+                    ? "bg-[#C8AD7F]/15 text-[#C8AD7F]"
+
+                    : "bg-white/[0.05] text-[#C8AD7F]"
+
+                }
+
+              `}
+
             >
-              {option.icon}
-            </span>
+
+              <span
+                className="
+                  text-xl
+                "
+              >
+
+                {option.icon}
+
+              </span>
+
+            </div>
 
           )
         }
 
 
-        <div className="flex-1">
 
 
-          <div
+
+        <div
+          className="
+            flex-1
+          "
+        >
+
+
+          <h3
+
             className="
-              flex
-              items-center
-              justify-between
-              gap-3
+
+              text-[16px]
+
+              font-medium
+
+              tracking-[-0.02em]
+
             "
+
           >
 
-            <h3
-              className="
-                text-base
-                font-medium
-                tracking-tight
-              "
-            >
-              {option.label}
-            </h3>
+            {option.label}
 
+          </h3>
 
-            {
-              selected && (
-
-                <span
-                  className="
-                    text-xs
-                    uppercase
-                    tracking-widest
-                    opacity-70
-                  "
-                >
-                  {multiple
-                    ? "✓"
-                    : "Seleccionado"
-                  }
-                </span>
-
-              )
-            }
-
-
-          </div>
 
 
 
@@ -150,28 +297,94 @@ export default function OptionCard({
             option.description && (
 
               <p
-                className={`
-                  mt-2
+
+                className="
+
+                  mt-1.5
+
                   text-sm
+
                   leading-relaxed
-                  ${
-                    selected
-                      ? "text-neutral-300"
-                      : "text-neutral-500"
-                  }
-                `}
+
+                  text-[#A7A092]
+
+                "
+
               >
+
                 {option.description}
+
               </p>
 
             )
           }
 
 
+
         </div>
 
 
+
+
+
+        {
+          selected && (
+
+            <motion.div
+
+              initial={{
+                opacity:0,
+                scale:0.5
+              }}
+
+              animate={{
+                opacity:1,
+                scale:1
+              }}
+
+              transition={{
+                duration:0.25
+              }}
+
+              className="
+
+                flex
+
+                h-7
+
+                w-7
+
+                items-center
+
+                justify-center
+
+                rounded-full
+
+                bg-[#C8AD7F]
+
+                text-[#111111]
+
+              "
+
+            >
+
+              <Check
+
+                size={15}
+
+                strokeWidth={3}
+
+              />
+
+            </motion.div>
+
+          )
+        }
+
+
+
       </div>
+
 
 
     </motion.button>
