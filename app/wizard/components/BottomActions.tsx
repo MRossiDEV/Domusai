@@ -2,8 +2,10 @@
 
 import {
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Check
 } from "lucide-react"
+
 
 
 interface BottomActionsProps {
@@ -59,6 +61,7 @@ export default function BottomActions({
     >
 
 
+
       <div
 
         className="
@@ -70,6 +73,8 @@ export default function BottomActions({
         "
 
       >
+
+
 
 
         {
@@ -115,6 +120,9 @@ export default function BottomActions({
 
 
 
+
+
+
         <button
 
           type="button"
@@ -146,26 +154,58 @@ export default function BottomActions({
 
         >
 
+
+
           {
             isLastStep
-              ? "Revisar evaluación"
+
+              ? "Enviar evaluación"
+
               : "Continuar"
+
           }
 
 
-          <ArrowRight
 
-            size={18}
+          {
+            isLastStep
 
-            strokeWidth={1.8}
+              ? (
 
-          />
+                <Check
+
+                  size={18}
+
+                  strokeWidth={1.8}
+
+                />
+
+              )
+
+              : (
+
+                <ArrowRight
+
+                  size={18}
+
+                  strokeWidth={1.8}
+
+                />
+
+              )
+
+          }
+
 
 
         </button>
 
 
+
+
       </div>
+
+
 
 
     </div>

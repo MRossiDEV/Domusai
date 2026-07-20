@@ -36,8 +36,6 @@ interface QuestionProps {
 
 
 
-
-
 export default function Question({
 
   question,
@@ -50,33 +48,31 @@ export default function Question({
 
 
 
-  const selectedValues =
-
-    useMemo(() => {
-
-      if (Array.isArray(value)) {
-
-        return value
-
-      }
+  const selectedValues = useMemo(() => {
 
 
-      if (typeof value === "string") {
+    if (Array.isArray(value)) {
 
-        return [value]
+      return value
 
-      }
-
-
-      return []
-
-    }, [
-
-      value
-
-    ])
+    }
 
 
+    if (typeof value === "string") {
+
+      return [value]
+
+    }
+
+
+    return []
+
+
+  }, [
+
+    value
+
+  ])
 
 
 
@@ -98,11 +94,7 @@ export default function Question({
 
       const updated =
 
-        selectedValues.includes(
-
-          optionValue
-
-        )
+        selectedValues.includes(optionValue)
 
           ? selectedValues.filter(
 
@@ -123,9 +115,52 @@ export default function Question({
 
 
 
+      onChange(updated)
+
+
+      return
+
+    }
+
+
+
+    onChange(optionValue)
+
+
+  }
+
+
+
+
+
+
+  function handleInputChange(
+
+    inputValue: string
+
+  ) {
+
+
+    if (
+
+      question.questionType === "number"
+
+    ) {
+
+
+      const numberValue =
+
+        Number(inputValue)
+
+
+
       onChange(
 
-        updated
+        Number.isNaN(numberValue)
+
+          ? ""
+
+          : numberValue
 
       )
 
@@ -136,14 +171,40 @@ export default function Question({
 
 
 
-    onChange(
+    onChange(inputValue)
 
-      optionValue
-
-    )
 
   }
 
+
+
+
+
+  const showOptions =
+
+    (
+
+      question.questionType === "single" ||
+
+      question.questionType === "multiple" ||
+
+      question.questionType === "select"
+
+    )
+
+    &&
+
+    question.options?.length
+
+
+
+
+
+  const showTextInput =
+
+    question.questionType === "text" ||
+
+    question.questionType === "number"
 
 
 
@@ -154,7 +215,6 @@ export default function Question({
 
     <motion.div
 
-
       initial={{
 
         opacity:0,
@@ -162,8 +222,6 @@ export default function Question({
         y:20
 
       }}
-
-
 
       animate={{
 
@@ -173,8 +231,6 @@ export default function Question({
 
       }}
 
-
-
       transition={{
 
         duration:0.45,
@@ -183,8 +239,6 @@ export default function Question({
 
       }}
 
-
-
       className="
         flex
         h-full
@@ -192,7 +246,6 @@ export default function Question({
       "
 
     >
-
 
 
 
@@ -207,8 +260,6 @@ export default function Question({
         "
 
       >
-
-
 
 
 
@@ -233,8 +284,6 @@ export default function Question({
 
 
 
-
-
         <h1
 
           className="
@@ -254,8 +303,6 @@ export default function Question({
           }
 
         </h1>
-
-
 
 
 
@@ -295,8 +342,6 @@ export default function Question({
 
 
 
-
-
       <div
 
         className="
@@ -312,10 +357,8 @@ export default function Question({
 
 
 
-
         {
-          question.options && (
-
+          showOptions && (
 
             <motion.div
 
@@ -325,15 +368,11 @@ export default function Question({
 
               }}
 
-
-
               animate={{
 
                 opacity:1
 
               }}
-
-
 
               transition={{
 
@@ -341,35 +380,26 @@ export default function Question({
 
               }}
 
-
-
               className="
                 space-y-3
               "
 
             >
 
-
-
               {
-                question.options.map(
+                question.options?.map(
 
                   option => (
 
                     <OptionCard
 
-
                       key={
                         option.value
                       }
 
-
-
                       option={
                         option
                       }
-
-
 
                       selected={
 
@@ -381,22 +411,17 @@ export default function Question({
 
                       }
 
-
-
                       multiple={
 
                         question.questionType === "multiple"
 
                       }
 
-
-
                       onSelect={
 
                         handleOptionSelect
 
                       }
-
 
                     />
 
@@ -405,7 +430,6 @@ export default function Question({
                 )
 
               }
-
 
 
             </motion.div>
@@ -421,21 +445,10 @@ export default function Question({
 
 
 
-
         {
-
-          (
-
-            question.questionType === "text" ||
-
-            question.questionType === "number"
-
-          )
-
-          && (
+          showTextInput && (
 
             <textarea
-
 
               value={
 
@@ -448,12 +461,11 @@ export default function Question({
               }
 
 
-
               onChange={
 
                 event =>
 
-                  onChange(
+                  handleInputChange(
 
                     event.target.value
 
@@ -462,13 +474,11 @@ export default function Question({
               }
 
 
-
               placeholder={
 
                 question.placeholder
 
               }
-
 
 
               className="
@@ -492,7 +502,6 @@ export default function Question({
             />
 
           )
-
         }
 
 

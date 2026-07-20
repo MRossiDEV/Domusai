@@ -1,5 +1,4 @@
 export type FlowStepType =
-
   | "intro"
   | "question"
   | "summary"
@@ -10,7 +9,6 @@ export type FlowStepType =
 
 
 export type QuestionType =
-
   | "single"
   | "multiple"
   | "text"
@@ -25,7 +23,6 @@ export type QuestionType =
 
 
 export type QuestionCategory =
-
   | "profile"
   | "contact"
   | "situation"
@@ -79,7 +76,6 @@ export interface ConditionalRule {
   questionId: string
 
   operator:
-
     | "equals"
     | "not_equals"
     | "contains"
@@ -112,7 +108,7 @@ export interface BaseStep {
 
 
 export interface IntroStep
-  extends BaseStep {
+extends BaseStep {
 
   type: "intro"
 
@@ -127,11 +123,11 @@ export interface IntroStep
 
 
 export interface QuestionStep
-  extends BaseStep {
+extends BaseStep {
 
   type: "question"
 
-  category: QuestionCategory
+  category?: QuestionCategory
 
   questionType: QuestionType
 
@@ -145,58 +141,12 @@ export interface QuestionStep
 
   required?: boolean
 
-  aiContext?: {
-
-    importance:
-
-      | "low"
-      | "medium"
-      | "high"
-
-    purpose:
-
-      | "qualification"
-      | "recommendation"
-      | "segmentation"
-      | "personalization"
-
-    tags?: string[]
-
-  }
-
-  analytics?: {
-
-    eventName?: string
-
-  }
-
-  ui?: {
-
-    layout?:
-
-      | "cards"
-      | "list"
-      | "grid"
-      | "input"
-
-    image?: string
-
-    animation?:
-
-      | "fade"
-      | "slide"
-      | "scale"
-
-    allowSkip?: boolean
-
-  }
-
 }
 
 
 
 export interface SummaryStep
-  extends BaseStep {
+extends BaseStep {
 
   type: "summary"
 
@@ -205,7 +155,7 @@ export interface SummaryStep
 
 
 export interface ContactStep
-  extends BaseStep {
+extends BaseStep {
 
   type: "contact"
 
@@ -214,7 +164,7 @@ export interface ContactStep
 
 
 export interface ProcessingStep
-  extends BaseStep {
+extends BaseStep {
 
   type: "processing"
 
@@ -223,7 +173,7 @@ export interface ProcessingStep
 
 
 export interface CompletionStep
-  extends BaseStep {
+extends BaseStep {
 
   type: "completion"
 
@@ -242,12 +192,13 @@ export type FlowStep =
 
 
 
+
+
 export interface WizardAnswer {
 
   questionId: string
 
   value:
-
     | string
     | string[]
     | number
@@ -258,16 +209,17 @@ export interface WizardAnswer {
 
 
 
+
+
 export interface ContactInformation {
 
-  fullName: string
+  fullName?: string
 
-  email: string
+  email?: string
 
-  phone: string
+  phone?: string
 
-  contactMethod:
-
+  contactMethod?:
     | "WhatsApp"
     | "Email"
     | "Llamada"
@@ -278,16 +230,18 @@ export interface ContactInformation {
 
 
 
+
+
 export interface WizardSubmission {
 
   assessment:
-
     Record<
       string,
       WizardAnswer
     >
 
-  contact: ContactInformation
+  contact:
+    ContactInformation
 
   startedAt?: number
 
@@ -297,14 +251,17 @@ export interface WizardSubmission {
 
 
 
+
+
 export interface WizardState {
 
   currentStep: number
 
-  answers: Record<
-    string,
-    WizardAnswer
-  >
+  answers:
+    Record<
+      string,
+      WizardAnswer
+    >
 
   startedAt?: number
 
@@ -313,6 +270,8 @@ export interface WizardState {
   contact?: ContactInformation
 
 }
+
+
 
 
 

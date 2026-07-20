@@ -25,8 +25,6 @@ interface SummaryProps {
 
 
 
-
-
 export default function Summary({
 
   questions,
@@ -58,8 +56,6 @@ export default function Summary({
 
 
 
-
-
   function getLabel(
 
     question: QuestionStep | undefined,
@@ -77,6 +73,7 @@ export default function Summary({
       return String(value)
 
     }
+
 
 
 
@@ -137,14 +134,9 @@ export default function Summary({
 
 
 
-
-
-
-
   return (
 
     <motion.div
-
 
       initial={{
 
@@ -154,8 +146,6 @@ export default function Summary({
 
       }}
 
-
-
       animate={{
 
         opacity:1,
@@ -164,15 +154,11 @@ export default function Summary({
 
       }}
 
-
-
       transition={{
 
         duration:0.4
 
       }}
-
-
 
       className="
         flex
@@ -217,6 +203,7 @@ export default function Summary({
 
 
 
+
         <h1
 
           className="
@@ -231,6 +218,7 @@ export default function Summary({
           Resumen de evaluación
 
         </h1>
+
 
 
 
@@ -290,6 +278,14 @@ export default function Summary({
                   answer.questionId
 
                 )
+
+
+
+              if (!question) {
+
+                return null
+
+              }
 
 
 
@@ -361,11 +357,11 @@ export default function Summary({
                     >
 
                       {
-                        question?.category ??
-                        "Información"
+                        question.category
                       }
 
                     </span>
+
 
 
 
@@ -387,6 +383,7 @@ export default function Summary({
 
 
 
+
                   <h3
 
                     className="
@@ -398,11 +395,11 @@ export default function Summary({
                   >
 
                     {
-                      question?.title ??
-                      answer.questionId
+                      question.title
                     }
 
                   </h3>
+
 
 
 
@@ -450,7 +447,10 @@ export default function Summary({
 
 
 
+
       </div>
+
+
 
 
 
@@ -464,11 +464,7 @@ export default function Summary({
         type="button"
 
 
-        onClick={
-
-          onContinue
-
-        }
+        onClick={onContinue}
 
 
         className="

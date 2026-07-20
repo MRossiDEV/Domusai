@@ -12,7 +12,8 @@ import {
   Mail,
   Phone,
   User,
-  MessageCircle
+  MessageCircle,
+  FileText
 } from "lucide-react"
 
 
@@ -37,13 +38,15 @@ export default function ContactForm({
 
   const [form, setForm] = useState({
 
-    name: "",
+    fullName: "",
 
     email: "",
 
     phone: "",
 
-    contactMethod: "whatsapp"
+    contactMethod: "WhatsApp",
+
+    message: ""
 
   })
 
@@ -82,9 +85,13 @@ export default function ContactForm({
 
 
     if (
-      !form.name ||
+
+      !form.fullName ||
+
       !form.email ||
+
       !form.phone
+
     ) {
 
       setError(
@@ -101,7 +108,24 @@ export default function ContactForm({
 
 
 
-    onSubmit(form)
+    onSubmit({
+
+      fullName:
+        form.fullName,
+
+      email:
+        form.email,
+
+      phone:
+        form.phone,
+
+      contactMethod:
+        form.contactMethod,
+
+      message:
+        form.message
+
+    })
 
 
   }
@@ -112,9 +136,7 @@ export default function ContactForm({
 
   return (
 
-
     <motion.div
-
 
       initial={{
 
@@ -124,8 +146,6 @@ export default function ContactForm({
 
       }}
 
-
-
       animate={{
 
         opacity:1,
@@ -134,64 +154,41 @@ export default function ContactForm({
 
       }}
 
-
-
       transition={{
 
         duration:0.5
 
       }}
 
-
-
       className="
-
         flex
-
         h-full
-
         flex-col
-
         overflow-y-auto
-
         px-6
-
         pb-32
-
       "
 
     >
 
 
 
-
-
       <div
 
         className="
-
           pt-10
-
           pb-8
-
         "
 
       >
 
-
-
         <span
 
           className="
-
             text-[10px]
-
             uppercase
-
             tracking-[0.35em]
-
             text-[#C8AD7F]
-
           "
 
         >
@@ -202,24 +199,15 @@ export default function ContactForm({
 
 
 
-
-
         <h1
 
           className="
-
             mt-6
-
             text-[34px]
-
             font-light
-
             leading-tight
-
             tracking-[-0.04em]
-
             text-[#F5F1E8]
-
           "
 
         >
@@ -230,20 +218,13 @@ export default function ContactForm({
 
 
 
-
-
         <p
 
           className="
-
             mt-5
-
             text-base
-
             leading-relaxed
-
             text-[#9A9488]
-
           "
 
         >
@@ -254,10 +235,7 @@ export default function ContactForm({
         </p>
 
 
-
       </div>
-
-
 
 
 
@@ -266,14 +244,10 @@ export default function ContactForm({
       <div
 
         className="
-
           space-y-4
-
         "
 
       >
-
-
 
 
 
@@ -283,17 +257,16 @@ export default function ContactForm({
 
           placeholder="Nombre completo"
 
-          value={form.name}
+          value={form.fullName}
 
           onChange={(value) =>
             updateField(
-              "name",
+              "fullName",
               value
             )
           }
 
         />
-
 
 
 
@@ -320,7 +293,6 @@ export default function ContactForm({
 
 
 
-
         <InputField
 
           icon={<Phone size={18}/>}
@@ -342,21 +314,36 @@ export default function ContactForm({
 
 
 
+        <InputField
+
+          icon={<FileText size={18}/>}
+
+          placeholder="Mensaje adicional (opcional)"
+
+          value={form.message}
+
+          onChange={(value) =>
+            updateField(
+              "message",
+              value
+            )
+          }
+
+        />
+
+
+
+
+
 
         <div
 
           className="
-
             rounded-[22px]
-
             border
-
             border-white/[0.08]
-
             bg-[#181818]
-
             p-5
-
           "
 
         >
@@ -365,15 +352,10 @@ export default function ContactForm({
           <div
 
             className="
-
               flex
-
               items-center
-
               gap-3
-
               text-[#F5F1E8]
-
             "
 
           >
@@ -381,15 +363,7 @@ export default function ContactForm({
             <MessageCircle size={18}/>
 
 
-            <span
-
-              className="
-
-                text-sm
-
-              "
-
-            >
+            <span className="text-sm">
 
               Preferencia de contacto
 
@@ -405,47 +379,42 @@ export default function ContactForm({
           <div
 
             className="
-
               mt-4
-
               grid
-
-              grid-cols-2
-
+              grid-cols-3
               gap-3
-
             "
 
           >
 
-
-
             {
+
               [
 
                 {
-                  value:"whatsapp",
+                  value:"WhatsApp",
                   label:"WhatsApp"
                 },
 
                 {
-                  value:"email",
+                  value:"Email",
                   label:"Email"
+                },
+
+                {
+                  value:"Llamada",
+                  label:"Llamada"
                 }
 
               ].map(option => (
 
-
                 <button
-
 
                   key={
                     option.value
                   }
 
-
                   type="button"
-
 
                   onClick={() =>
                     updateField(
@@ -453,7 +422,6 @@ export default function ContactForm({
                       option.value
                     )
                   }
-
 
                   className={`
 
@@ -482,19 +450,15 @@ export default function ContactForm({
 
                   `}
 
-
                 >
 
                   {option.label}
 
-
                 </button>
-
 
               ))
 
             }
-
 
 
           </div>
@@ -507,21 +471,13 @@ export default function ContactForm({
 
 
 
-
         {
           error && (
 
-            <p
-
-              className="
-
-                text-sm
-
-                text-red-400
-
-              "
-
-            >
+            <p className="
+              text-sm
+              text-red-400
+            ">
 
               {error}
 
@@ -531,11 +487,7 @@ export default function ContactForm({
         }
 
 
-
-
-
       </div>
-
 
 
 
@@ -544,41 +496,24 @@ export default function ContactForm({
 
       <button
 
-
         type="button"
-
 
         onClick={handleSubmit}
 
-
         className="
-
           mt-auto
-
           h-14
-
           w-full
-
           rounded-full
-
           bg-[#C8AD7F]
-
           text-sm
-
           font-medium
-
           tracking-wide
-
           text-[#111111]
-
           shadow-[0_12px_35px_rgba(200,173,127,0.18)]
-
           transition
-
           active:scale-[0.98]
-
         "
-
 
       >
 
@@ -592,7 +527,6 @@ export default function ContactForm({
 
 
     </motion.div>
-
 
   )
 
@@ -642,41 +576,24 @@ function InputField({
     <div
 
       className="
-
         flex
-
         items-center
-
         gap-4
-
         rounded-[22px]
-
         border
-
         border-white/[0.08]
-
         bg-[#181818]
-
         px-5
-
         py-4
-
         text-[#F5F1E8]
-
       "
 
     >
 
 
-      <div
-
-        className="
-
-          text-[#C8AD7F]
-
-        "
-
-      >
+      <div className="
+        text-[#C8AD7F]
+      ">
 
         {icon}
 
@@ -687,12 +604,9 @@ function InputField({
 
       <input
 
-
         type={type}
 
-
         value={value}
-
 
         onChange={(event) =>
           onChange(
@@ -700,27 +614,17 @@ function InputField({
           )
         }
 
-
         placeholder={placeholder}
 
-
         className="
-
           w-full
-
           bg-transparent
-
           text-base
-
           outline-none
-
           placeholder:text-[#77736B]
-
         "
 
-
       />
-
 
 
     </div>

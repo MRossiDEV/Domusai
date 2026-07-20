@@ -22,8 +22,10 @@ import {
 } from "../hooks/useWizard"
 
 import type {
-  WizardConfig
+  WizardConfig,
+  QuestionStep
 } from "../types"
+
 
 
 interface WizardProps {
@@ -48,6 +50,8 @@ export default function Wizard({
     setShowSplash
 
   ] = useState(true)
+
+
 
 
 
@@ -81,7 +85,20 @@ export default function Wizard({
 
 
 
-  function handleContinue() {
+
+
+
+
+  function handleNext() {
+
+    if (
+      currentStepData?.type === "contact"
+    ) {
+
+      return
+
+    }
+
 
     next()
 
@@ -89,7 +106,12 @@ export default function Wizard({
 
 
 
-  function handleSubmit(
+
+
+
+
+
+  function handleContactSubmit(
 
     contactData: Record<string,string>
 
@@ -107,10 +129,15 @@ export default function Wizard({
     }
 
 
+
     console.log(
+
       "DOMUSAI Submission",
+
       submission
+
     )
+
 
 
     next()
@@ -120,11 +147,45 @@ export default function Wizard({
 
 
 
+
+
+
   function handleRestart() {
 
     reset()
 
   }
+
+
+
+
+
+
+
+  const questionSteps =
+
+    config.steps.filter(
+
+      (step): step is QuestionStep =>
+
+        step.type === "question"
+
+    )
+
+
+
+
+
+
+
+
+  if (!currentStepData) {
+
+    return null
+
+  }
+
+
 
 
 
@@ -149,6 +210,9 @@ export default function Wizard({
 
 
 
+
+
+
       {
         showSplash && (
 
@@ -167,14 +231,23 @@ export default function Wizard({
 
 
 
+
+
+
+
       {
         !showSplash && (
 
           <AnimatePresence mode="wait">
 
 
+
+
+
+
+
             {
-              currentStepData?.type === "intro" && (
+              currentStepData.type === "intro" && (
 
                 <motion.div
 
@@ -188,60 +261,132 @@ export default function Wizard({
                     opacity:1
                   }}
 
-                  className="h-full"
+                  className="
+                    relative
+                    h-full
+                    w-full
+                    overflow-hidden
+                  "
 
                 >
 
-                  <div className="
-                    flex
-                    h-full
-                    flex-col
-                    items-center
-                    justify-center
-                    px-6
-                    text-center
-                  ">
-
-
-                    {
-                      currentStepData.video && (
-
-                        <video
-
-                          src={
-                            currentStepData.video
-                          }
-
-                          poster={
-                            currentStepData.poster
-                          }
-
-                          autoPlay
-
-                          muted
-
-                          playsInline
-
-                          className="
-                            mb-8
-                            aspect-video
-                            w-full
-                            max-w-md
-                            rounded-3xl
-                            object-cover
-                          "
-
-                        />
-
-                      )
-                    }
 
 
 
-                    <h1 className="
-                      text-3xl
-                      font-light
-                    ">
+
+                  {
+                    currentStepData.video && (
+
+                      <video
+
+                        src={
+                          currentStepData.video
+                        }
+
+                        poster={
+                          currentStepData.poster
+                        }
+
+                        autoPlay
+
+                        muted
+
+                        loop
+
+                        playsInline
+
+                        className="
+                          absolute
+                          inset-0
+                          h-full
+                          w-full
+                          object-cover
+                        "
+
+                      />
+
+                    )
+                  }
+
+
+
+
+
+
+
+                  <div
+
+                    className="
+                      absolute
+                      inset-0
+                      bg-black/60
+                    "
+
+                  />
+
+
+
+
+
+
+
+
+                  <div
+
+                    className="
+                      relative
+                      z-10
+                      flex
+                      h-full
+                      flex-col
+                      items-center
+                      justify-end
+                      px-6
+                      pb-12
+                      text-center
+                    "
+
+                  >
+
+
+
+
+
+                    <span
+
+                      className="
+                        text-[10px]
+                        uppercase
+                        tracking-[0.45em]
+                        text-[#C8AD7F]
+                      "
+
+                    >
+
+                      DOMUSAI
+
+                    </span>
+
+
+
+
+
+
+
+
+                    <h1
+
+                      className="
+                        mt-6
+                        max-w-lg
+                        text-4xl
+                        font-light
+                        leading-tight
+                        tracking-[-0.04em]
+                        text-white
+                      "
+
+                    >
 
                       {
                         currentStepData.title
@@ -251,23 +396,48 @@ export default function Wizard({
 
 
 
-                    <p className="
-                      mt-4
-                      max-w-md
-                      text-[#9A9488]
-                    ">
 
-                      {
-                        currentStepData.description
-                      }
 
-                    </p>
+
+
+
+                    {
+                      currentStepData.description && (
+
+                        <p
+
+                          className="
+                            mt-5
+                            max-w-md
+                            text-base
+                            leading-relaxed
+                            text-white/70
+                          "
+
+                        >
+
+                          {
+                            currentStepData.description
+                          }
+
+                        </p>
+
+                      )
+                    }
+
+
+
+
+
+
 
 
 
                     <button
 
-                      onClick={handleContinue}
+                      type="button"
+
+                      onClick={handleNext}
 
                       className="
                         mt-10
@@ -278,7 +448,9 @@ export default function Wizard({
                         bg-[#C8AD7F]
                         text-sm
                         font-medium
-                        text-black
+                        text-[#111111]
+                        transition
+                        active:scale-[0.98]
                       "
 
                     >
@@ -291,13 +463,26 @@ export default function Wizard({
                     </button>
 
 
+
+
+
                   </div>
+
+
+
 
 
                 </motion.div>
 
               )
+
             }
+
+
+
+
+
+
 
 
 
@@ -338,6 +523,10 @@ export default function Wizard({
                 >
 
 
+
+
+
+
                   <Progress
 
                     current={
@@ -354,10 +543,19 @@ export default function Wizard({
 
 
 
-                  <div className="
-                    flex-1
-                    overflow-hidden
-                  ">
+
+
+
+
+
+                  <div
+
+                    className="
+                      flex-1
+                      overflow-hidden
+                    "
+
+                  >
 
 
                     <Question
@@ -367,17 +565,25 @@ export default function Wizard({
                       }
 
                       value={
+
                         answers[
                           currentQuestion.id
                         ]?.value
+
                       }
 
                       onChange={
+
                         value =>
+
                           setAnswer(
+
                             currentQuestion.id,
+
                             value
+
                           )
+
                       }
 
                     />
@@ -388,11 +594,15 @@ export default function Wizard({
 
 
 
+
+
+
+
                   <BottomActions
 
                     onBack={back}
 
-                    onNext={handleContinue}
+                    onNext={handleNext}
 
                     showBack={
                       !isFirstStep
@@ -402,12 +612,21 @@ export default function Wizard({
                       !canContinue
                     }
 
+                    isLastStep={
+                      false
+                    }
+
                   />
+
+
+
+
 
 
                 </motion.div>
 
               )
+
             }
 
 
@@ -417,8 +636,13 @@ export default function Wizard({
 
 
 
+
+
+
+
+
             {
-              currentStepData?.type === "summary" && (
+              currentStepData.type === "summary" && (
 
                 <motion.div
 
@@ -431,11 +655,7 @@ export default function Wizard({
                   <Summary
 
                     questions={
-                      config.steps
-                        .filter(
-                          step =>
-                            step.type === "question"
-                        )
+                      questionSteps
                     }
 
                     answers={
@@ -443,7 +663,7 @@ export default function Wizard({
                     }
 
                     onContinue={
-                      handleContinue
+                      handleNext
                     }
 
                   />
@@ -452,7 +672,12 @@ export default function Wizard({
                 </motion.div>
 
               )
+
             }
+
+
+
+
 
 
 
@@ -462,18 +687,33 @@ export default function Wizard({
 
 
             {
-              currentStepData?.type === "contact" && (
+              currentStepData.type === "contact" && (
 
-                <ContactForm
+                <motion.div
 
-                  onSubmit={
-                    handleSubmit
-                  }
+                  key="contact"
 
-                />
+                  className="h-full"
+
+                >
+
+                  <ContactForm
+
+                    onSubmit={
+                      handleContactSubmit
+                    }
+
+                  />
+
+                </motion.div>
 
               )
+
             }
+
+
+
+
 
 
 
@@ -483,25 +723,99 @@ export default function Wizard({
 
 
             {
-              currentStepData?.type === "completion" && (
+              currentStepData.type === "processing" && (
 
-                <Completion
+                <motion.div
 
-                  onRestart={
-                    handleRestart
-                  }
+                  key="processing"
 
-                />
+                  initial={{
+                    opacity:0
+                  }}
+
+                  animate={{
+                    opacity:1
+                  }}
+
+                  className="
+                    flex
+                    h-full
+                    items-center
+                    justify-center
+                  "
+
+                >
+
+                  <p
+
+                    className="
+                      text-[#9A9488]
+                    "
+
+                  >
+
+                    Preparando su perfil de adquisición...
+
+                  </p>
+
+
+                </motion.div>
 
               )
+
             }
+
+
+
+
+
+
+
+
+
+
+
+
+            {
+              currentStepData.type === "completion" && (
+
+                <motion.div
+
+                  key="completion"
+
+                  className="h-full"
+
+                >
+
+                  <Completion
+
+                    onRestart={
+                      handleRestart
+                    }
+
+                  />
+
+                </motion.div>
+
+              )
+
+            }
+
+
+
 
 
 
           </AnimatePresence>
 
         )
+
       }
+
+
+
+
+
 
 
     </main>

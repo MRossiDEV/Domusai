@@ -2,6 +2,7 @@ import type {
   WizardConfig
 } from "../types"
 
+
 export const buyerAssessment: WizardConfig = {
 
   id: "buyer-assessment",
@@ -10,7 +11,8 @@ export const buyerAssessment: WizardConfig = {
     "Solicitud de Representación como Comprador",
 
   description:
-    "Complete la siguiente evaluación para que nuestro equipo pueda analizar su perfil y asignarle un asesor especializado.",
+    "Complete la evaluación para que nuestro equipo pueda analizar su perfil y preparar una búsqueda personalizada.",
+
 
   settings: {
 
@@ -28,6 +30,7 @@ export const buyerAssessment: WizardConfig = {
 
   },
 
+
   steps: [
 
     {
@@ -42,14 +45,19 @@ export const buyerAssessment: WizardConfig = {
         "Asistente Privado de Adquisición Inmobiliaria",
 
       description:
-        "Antes de comenzar, uno de nuestros asistentes virtuales le explicará brevemente cómo funciona el proceso de evaluación y cómo utilizaremos la información proporcionada para preparar una búsqueda personalizada.",
+        "Realizaremos una evaluación breve para comprender sus objetivos, preferencias y criterios de adquisición.",
 
-      video: "/videos/avatar-intro.mp4",
+      video:
+        "/videos/avatar-intro.mp4",
 
-      poster: "/images/avatar-poster.jpg",
+      poster:
+        "/images/avatar-poster.jpg",
 
-      cta: "Comenzar evaluación"
+      cta:
+        "Comenzar evaluación"
+
     },
+
 
     {
       id: "buyer_objective",
@@ -63,526 +71,360 @@ export const buyerAssessment: WizardConfig = {
       title:
         "¿Cuál es el objetivo principal de esta adquisición?",
 
-      subtitle:
-        "Seleccione la opción que mejor describa su intención.",
-
       required: true,
 
       options: [
 
         {
-          value: "primary_residence",
-          label: "Residencia principal"
+          value:"primary_residence",
+          label:"Residencia principal"
         },
 
         {
-          value: "investment",
-          label: "Inversión patrimonial"
+          value:"investment",
+          label:"Inversión patrimonial"
         },
 
         {
-          value: "relocation",
-          label: "Relocalización a Uruguay"
+          value:"relocation",
+          label:"Relocalización a Uruguay"
         },
 
         {
-          value: "second_home",
-          label: "Segunda residencia"
-        },
-
-        {
-          value: "corporate",
-          label: "Compra corporativa"
+          value:"second_home",
+          label:"Segunda residencia"
         }
 
       ]
 
     },
 
+
     {
-      id: "purchase_stage",
+      id:"purchase_stage",
 
-      type: "question",
+      type:"question",
 
-      category: "profile",
+      category:"profile",
 
-      questionType: "single",
+      questionType:"single",
 
       title:
         "¿En qué etapa se encuentra actualmente?",
 
-      required: true,
+      required:true,
 
-      options: [
+      options:[
 
         {
-          value: "ready",
-          label: "Listo para comprar"
+          value:"ready",
+          label:"Listo para comprar"
         },
 
         {
-          value: "shortlist",
-          label: "Evaluando opciones concretas"
+          value:"shortlist",
+          label:"Evaluando propiedades"
         },
 
         {
-          value: "planning",
-          label: "Planificando la compra"
+          value:"planning",
+          label:"Planificando compra"
         },
 
         {
-          value: "research",
-          label: "Investigación inicial"
+          value:"research",
+          label:"Investigación inicial"
         }
 
       ]
 
     },
 
-    {
-      id: "decision_makers",
-
-      type: "question",
-
-      category: "profile",
-
-      questionType: "single",
-
-      title:
-        "¿Quién participa en la decisión de compra?",
-
-      required: true,
-
-      options: [
-
-        {
-          value: "self",
-          label: "Solo yo"
-        },
-
-        {
-          value: "couple",
-          label: "Pareja"
-        },
-
-        {
-          value: "family",
-          label: "Familia"
-        },
-
-        {
-          value: "partners",
-          label: "Socios o inversionistas"
-        }
-
-      ]
-
-    },
 
     {
-      id: "current_country",
+      id:"current_country",
 
-      type: "question",
+      type:"question",
 
-      category: "location",
+      category:"location",
 
-      questionType: "single",
+      questionType:"single",
 
       title:
         "¿Dónde reside actualmente?",
 
-      required: true,
+      required:true,
 
-      options: [
+      options:[
 
         {
-          value: "uruguay",
-          label: "Uruguay"
+          value:"uruguay",
+          label:"Uruguay"
         },
 
         {
-          value: "latin_america",
-          label: "Latinoamérica"
+          value:"latin_america",
+          label:"Latinoamérica"
         },
 
         {
-          value: "north_america",
-          label: "Norteamérica"
+          value:"north_america",
+          label:"Norteamérica"
         },
 
         {
-          value: "europe",
-          label: "Europa"
+          value:"europe",
+          label:"Europa"
         },
 
         {
-          value: "other",
-          label: "Otro"
+          value:"other",
+          label:"Otro"
         }
 
       ]
 
     },
 
+
     {
-      id: "property_type",
+      id:"property_type",
 
-      type: "question",
+      type:"question",
 
-      category: "property",
+      category:"property",
 
-      questionType: "multiple",
+      questionType:"multiple",
 
       title:
         "¿Qué tipo de propiedad desea evaluar?",
 
-      required: true,
+      required:true,
 
-      options: [
+      options:[
 
         {
-          value: "apartment",
-          label: "Apartamento"
+          value:"apartment",
+          label:"Apartamento"
         },
 
         {
-          value: "house",
-          label: "Casa"
+          value:"house",
+          label:"Casa"
         },
 
         {
-          value: "penthouse",
-          label: "Penthouse"
+          value:"penthouse",
+          label:"Penthouse"
         },
 
         {
-          value: "land",
-          label: "Terreno"
-        },
-
-        {
-          value: "rural",
-          label: "Propiedad rural"
+          value:"land",
+          label:"Terreno"
         }
 
       ]
 
     },
 
+
     {
-      id: "preferred_locations",
+      id:"preferred_locations",
 
-      type: "question",
+      type:"question",
 
-      category: "location",
+      category:"location",
 
-      questionType: "multiple",
+      questionType:"multiple",
 
       title:
-        "¿Qué mercados desea que analicemos?",
+        "¿Qué zonas desea analizar?",
 
-      subtitle:
-        "Puede seleccionar varias opciones.",
+      required:true,
 
-      required: true,
-
-      options: [
+      options:[
 
         {
-          value: "carrasco",
-          label: "Carrasco"
+          value:"carrasco",
+          label:"Carrasco"
         },
 
         {
-          value: "punta_gorda",
-          label: "Punta Gorda"
+          value:"punta_gorda",
+          label:"Punta Gorda"
         },
 
         {
-          value: "pocitos",
-          label: "Pocitos"
+          value:"pocitos",
+          label:"Pocitos"
         },
 
         {
-          value: "punta_carretas",
-          label: "Punta Carretas"
+          value:"punta_carretas",
+          label:"Punta Carretas"
         },
 
         {
-          value: "punta_del_este",
-          label: "Punta del Este"
-        },
-
-        {
-          value: "jose_ignacio",
-          label: "José Ignacio"
-        },
-
-        {
-          value: "other",
-          label: "Otra ubicación"
+          value:"punta_del_este",
+          label:"Punta del Este"
         }
 
       ]
 
     },
 
+
     {
-      id: "investment_range",
+      id:"investment_range",
 
-      type: "question",
+      type:"question",
 
-      category: "financial",
+      category:"financial",
 
-      questionType: "single",
+      questionType:"single",
 
       title:
         "¿Cuál es el rango estimado de inversión?",
 
-      required: true,
+      required:true,
 
-      options: [
+      options:[
 
         {
-          value: "300k",
-          label: "Hasta USD 300.000"
+          value:"300k",
+          label:"Hasta USD 300.000"
         },
 
         {
-          value: "600k",
-          label: "USD 300.000 - 600.000"
+          value:"600k",
+          label:"USD 300.000 - 600.000"
         },
 
         {
-          value: "1m",
-          label: "USD 600.000 - 1.000.000"
+          value:"1m",
+          label:"USD 600.000 - 1.000.000"
         },
 
         {
-          value: "3m",
-          label: "USD 1.000.000 - 3.000.000"
-        },
-
-        {
-          value: "3m_plus",
-          label: "Más de USD 3.000.000"
-        },
-
-        {
-          value: "private",
-          label: "Prefiero conversarlo personalmente"
+          value:"3m_plus",
+          label:"Más de USD 3.000.000"
         }
 
       ]
 
     },
 
-    {
-      id: "funding",
-
-      type: "question",
-
-      category: "financial",
-
-      questionType: "single",
-
-      title:
-        "¿Cómo prevé financiar la adquisición?",
-
-      required: true,
-
-      options: [
-
-        {
-          value: "cash",
-          label: "Fondos propios"
-        },
-
-        {
-          value: "mortgage_approved",
-          label: "Financiación aprobada"
-        },
-
-        {
-          value: "mortgage_process",
-          label: "Financiación en proceso"
-        },
-
-        {
-          value: "corporate",
-          label: "Compra corporativa"
-        },
-
-        {
-          value: "private",
-          label: "Prefiero conversarlo"
-        }
-
-      ]
-
-    },
 
     {
-      id: "timeline",
+      id:"timeline",
 
-      type: "question",
+      type:"question",
 
-      category: "timeline",
+      category:"timeline",
 
-      questionType: "single",
+      questionType:"single",
 
       title:
         "¿En qué plazo espera concretar la compra?",
 
-      required: true,
+      required:true,
 
-      options: [
+      options:[
 
         {
-          value: "30_days",
-          label: "Dentro de 30 días"
+          value:"30_days",
+          label:"Dentro de 30 días"
         },
 
         {
-          value: "90_days",
-          label: "Dentro de 3 meses"
+          value:"90_days",
+          label:"Dentro de 3 meses"
         },
 
         {
-          value: "6_months",
-          label: "Dentro de 6 meses"
+          value:"6_months",
+          label:"Dentro de 6 meses"
         },
 
         {
-          value: "flexible",
-          label: "Sin fecha definida"
+          value:"flexible",
+          label:"Sin fecha definida"
         }
 
       ]
 
     },
 
-    {
-      id: "lifestyle",
-
-      type: "question",
-
-      category: "lifestyle",
-
-      questionType: "multiple",
-
-      title:
-        "¿Qué características son prioritarias para usted?",
-
-      options: [
-
-        {
-          value: "security",
-          label: "Seguridad"
-        },
-
-        {
-          value: "architecture",
-          label: "Arquitectura"
-        },
-
-        {
-          value: "waterfront",
-          label: "Vista al agua"
-        },
-
-        {
-          value: "garden",
-          label: "Jardín"
-        },
-
-        {
-          value: "privacy",
-          label: "Privacidad"
-        },
-
-        {
-          value: "office",
-          label: "Home Office"
-        },
-
-        {
-          value: "garage",
-          label: "Garage"
-        },
-
-        {
-          value: "smart_home",
-          label: "Tecnología Smart Home"
-        }
-
-      ]
-
-    },
 
     {
-      id: "additional_notes",
+      id:"additional_notes",
 
-      type: "question",
+      type:"question",
 
-      category: "additional",
+      category:"additional",
 
-      questionType: "text",
+      questionType:"text",
 
       title:
-        "¿Hay algún requerimiento importante que nuestro equipo deba conocer?",
+        "¿Existe algún requerimiento adicional?",
 
       placeholder:
-        "Comparta cualquier detalle que considere relevante para la búsqueda.",
+        "Indique cualquier detalle importante.",
 
-      validation: {
+      ui:{
 
-        maxLength: 1000
+        layout:"input",
 
-      },
-
-      ui: {
-
-        layout: "input",
-
-        animation: "fade",
-
-        allowSkip: true
+        allowSkip:true
 
       }
 
     },
 
-    {
-      id: "summary",
 
-      type: "summary"
+    {
+      id:"summary",
+
+      type:"summary",
+
+      title:
+        "Resumen de evaluación"
 
     },
 
-    {
-      id: "contact",
 
-      type: "contact"
+    {
+      id:"contact",
+
+      type:"contact",
+
+      title:
+        "Datos de contacto"
 
     },
 
-    {
-      id: "processing",
 
-      type: "processing",
+    {
+      id:"processing",
+
+      type:"processing",
 
       title:
         "Preparando su perfil de adquisición"
 
     },
 
-    {
-      id: "completed",
 
-      type: "completion"
+    {
+      id:"completion",
+
+      type:"completion",
+
+      title:
+        "Evaluación completada"
 
     }
+
 
   ]
 
