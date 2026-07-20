@@ -1,15 +1,33 @@
+export type FlowStepType =
+
+  | "intro"
+  | "question"
+  | "summary"
+  | "contact"
+  | "processing"
+  | "completion"
+
+
+
 export type QuestionType =
+
   | "single"
   | "multiple"
   | "text"
+  | "email"
+  | "phone"
   | "number"
   | "range"
   | "select"
   | "location"
   | "currency"
 
+
+
 export type QuestionCategory =
+
   | "profile"
+  | "contact"
   | "situation"
   | "property"
   | "lifestyle"
@@ -19,89 +37,143 @@ export type QuestionCategory =
   | "additional"
 
 
+
 export interface WizardOption {
+
   value: string
+
   label: string
+
   description?: string
+
   icon?: string
+
   score?: number
+
   tags?: string[]
+
 }
+
 
 
 export interface ValidationRules {
+
   required?: boolean
+
   minLength?: number
+
   maxLength?: number
+
   min?: number
+
   max?: number
+
+  pattern?: string
+
 }
 
 
+
 export interface ConditionalRule {
+
   questionId: string
+
   operator:
+
     | "equals"
     | "not_equals"
     | "contains"
     | "greater_than"
     | "less_than"
 
-  value: string | number | boolean
+  value:
+    | string
+    | number
+    | boolean
+
 }
 
 
-export interface WizardQuestion {
+
+export interface BaseStep {
+
   id: string
 
-  category: QuestionCategory
+  type: FlowStepType
 
-  type: QuestionType
-
-  title: string
+  title?: string
 
   subtitle?: string
 
-  placeholder?: string
-
   description?: string
 
+}
+
+
+
+export interface IntroStep
+  extends BaseStep {
+
+  type: "intro"
+
+  video?: string
+
+  poster?: string
+
+  cta?: string
+
+}
+
+
+
+export interface QuestionStep
+  extends BaseStep {
+
+  type: "question"
+
+  category: QuestionCategory
+
+  questionType: QuestionType
+
+  placeholder?: string
 
   options?: WizardOption[]
 
-
   validation?: ValidationRules
-
 
   condition?: ConditionalRule
 
-
   required?: boolean
 
-
   aiContext?: {
+
     importance:
+
       | "low"
       | "medium"
       | "high"
 
     purpose:
+
       | "qualification"
       | "recommendation"
       | "segmentation"
       | "personalization"
 
     tags?: string[]
-  }
 
+  }
 
   analytics?: {
+
     eventName?: string
+
   }
 
-
   ui?: {
+
     layout?:
+
       | "cards"
       | "list"
       | "grid"
@@ -110,25 +182,117 @@ export interface WizardQuestion {
     image?: string
 
     animation?:
+
       | "fade"
       | "slide"
       | "scale"
 
     allowSkip?: boolean
+
   }
+
 }
 
 
 
+export interface SummaryStep
+  extends BaseStep {
+
+  type: "summary"
+
+}
+
+
+
+export interface ContactStep
+  extends BaseStep {
+
+  type: "contact"
+
+}
+
+
+
+export interface ProcessingStep
+  extends BaseStep {
+
+  type: "processing"
+
+}
+
+
+
+export interface CompletionStep
+  extends BaseStep {
+
+  type: "completion"
+
+}
+
+
+
+export type FlowStep =
+
+  | IntroStep
+  | QuestionStep
+  | SummaryStep
+  | ContactStep
+  | ProcessingStep
+  | CompletionStep
+
+
+
 export interface WizardAnswer {
+
   questionId: string
 
   value:
+
     | string
     | string[]
     | number
 
   timestamp?: number
+
+}
+
+
+
+export interface ContactInformation {
+
+  fullName: string
+
+  email: string
+
+  phone: string
+
+  contactMethod:
+
+    | "WhatsApp"
+    | "Email"
+    | "Llamada"
+
+  message?: string
+
+}
+
+
+
+export interface WizardSubmission {
+
+  assessment:
+
+    Record<
+      string,
+      WizardAnswer
+    >
+
+  contact: ContactInformation
+
+  startedAt?: number
+
+  completedAt?: number
+
 }
 
 
@@ -145,6 +309,9 @@ export interface WizardState {
   startedAt?: number
 
   completedAt?: number
+
+  contact?: ContactInformation
+
 }
 
 
@@ -157,9 +324,7 @@ export interface WizardConfig {
 
   description?: string
 
-
-  questions: WizardQuestion[]
-
+  steps: FlowStep[]
 
   settings?: {
 
@@ -171,5 +336,10 @@ export interface WizardConfig {
 
     autoSave?: boolean
 
+    showStepCounter?: boolean
+
+    mobileAppMode?: boolean
+
   }
+
 }

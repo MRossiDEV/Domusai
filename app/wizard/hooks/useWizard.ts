@@ -1,18 +1,24 @@
 "use client"
 
-import { useCallback, useMemo, useState } from "react"
+import {
+  useCallback,
+  useMemo,
+  useState
+} from "react"
 
 import type {
+  FlowStep,
+  QuestionStep,
   WizardAnswer,
   WizardConfig,
-  WizardQuestion,
   WizardState
 } from "../types"
 
-
 interface UseWizardReturn {
 
-  currentQuestion: WizardQuestion | undefined
+  currentStepData: FlowStep
+
+  currentQuestion: QuestionStep | undefined
 
   currentStep: number
 
@@ -47,145 +53,122 @@ interface UseWizardReturn {
 
 }
 
-
-
 export function useWizard(
   config: WizardConfig
 ): UseWizardReturn {
 
-
-  const [state, setState] = useState<WizardState>({
-
+  const [
+    state,
+    setState
+  ] = useState<WizardState>({
     currentStep: 0,
-
     answers: {},
-
-    startedAt:
-      Date.now()
-
+    startedAt: Date.now()
   })
 
+  const steps = useMemo(() => {
 
-  const questions = useMemo(() => {
+    return config.steps.filter(step => {
 
-    return config.questions.filter(
-      (question) => {
+      if (step.type !== "question") {
+        return true
+      }
 
-        if (!question.condition) {
+      if (!step.condition) {
+        return true
+      }
+
+      const dependency =
+        state.answers[
+          step.condition.questionId
+        ]
+
+      if (!dependency) {
+        return false
+      }
+
+      const answer =
+        dependency.value
+
+      switch (
+        step.condition.operator
+      ) {
+
+        case "equals":
+
+          return (
+            answer ===
+            step.condition.value
+          )
+
+        case "not_equals":
+
+          return (
+            answer !==
+            step.condition.value
+          )
+
+        case "contains":
+
+          return Array.isArray(answer)
+            ? answer.includes(
+                step.condition.value as string
+              )
+            : String(answer).includes(
+                String(step.condition.value)
+              )
+
+        case "greater_than":
+
+          return (
+            Number(answer) >
+            Number(step.condition.value)
+          )
+
+        case "less_than":
+
+          return (
+            Number(answer) <
+            Number(step.condition.value)
+          )
+
+        default:
+
           return true
-        }
-
-
-        const dependency =
-          state.answers[
-            question.condition.questionId
-          ]
-
-
-        if (!dependency) {
-          return false
-        }
-
-
-        const answer =
-          dependency.value
-
-
-        switch (
-          question.condition.operator
-        ) {
-
-          case "equals":
-
-            return (
-              answer ===
-              question.condition.value
-            )
-
-
-          case "not_equals":
-
-            return (
-              answer !==
-              question.condition.value
-            )
-
-
-          case "contains":
-
-            return Array.isArray(answer)
-              ? answer.includes(
-                  question.condition.value as string
-                )
-              : String(answer).includes(
-                  String(question.condition.value)
-                )
-
-
-          case "greater_than":
-
-            return (
-              Number(answer) >
-              Number(question.condition.value)
-            )
-
-
-          case "less_than":
-
-            return (
-              Number(answer) <
-              Number(question.condition.value)
-            )
-
-
-          default:
-
-            return true
-        }
 
       }
-    )
+
+    })
 
   }, [
-    config.questions,
+    config.steps,
     state.answers
   ])
 
-
+  const currentStepData =
+    steps[state.currentStep]
 
   const currentQuestion =
-    questions[
-      state.currentStep
-    ]
-
-
+    currentStepData?.type === "question"
+      ? currentStepData
+      : undefined
 
   const totalSteps =
-    questions.length
-
-
+    steps.length
 
   const progress =
     totalSteps === 0
       ? 0
-      :
-        (
-          (state.currentStep + 1)
-          /
+      : (
+          (state.currentStep + 1) /
           totalSteps
         ) * 100
-
-
 
   const isFirstStep =
     state.currentStep === 0
 
-
-
   const isLastStep =
     state.currentStep === totalSteps - 1
-
-
 
   const currentAnswer =
     currentQuestion
@@ -194,167 +177,150 @@ export function useWizard(
         ]
       : undefined
 
+  const canContinue = useMemo(() => {
 
+    if (!currentQuestion) {
+      return true
+    }
 
-  const canContinue =
-    currentQuestion?.required
-      ? Boolean(
-          currentAnswer?.value &&
-          (
-            Array.isArray(
-              currentAnswer.value
-            )
-              ? currentAnswer.value.length > 0
-              : true
-          )
-        )
-      :
-        true
+    if (!currentQuestion.required) {
+      return true
+    }
 
+    if (!currentAnswer) {
+      return false
+    }
 
+    if (Array.isArray(currentAnswer.value)) {
+      return currentAnswer.value.length > 0
+    }
+
+    if (typeof currentAnswer.value === "number") {
+      return true
+    }
+
+    return String(
+      currentAnswer.value
+    ).trim().length > 0
+
+  }, [
+    currentQuestion,
+    currentAnswer
+  ])
 
   const setAnswer = useCallback(
+
     (
-      questionId: string,
-      value: string | string[] | number
+      questionId,
+      value
     ) => {
 
-      setState(
-        previous => ({
+      setState(previous => ({
 
-          ...previous,
+        ...previous,
 
-          answers: {
+        answers: {
 
-            ...previous.answers,
+          ...previous.answers,
 
-            [questionId]: {
+          [questionId]: {
 
-              questionId,
+            questionId,
 
-              value,
+            value,
 
-              timestamp:
-                Date.now()
-
-            }
+            timestamp: Date.now()
 
           }
 
-        })
+        }
+
+      }))
+
+    },
+
+    []
+
+  )
+
+  const next = useCallback(() => {
+
+    if (!canContinue) {
+      return
+    }
+
+    setState(previous => ({
+
+      ...previous,
+
+      currentStep: Math.min(
+        previous.currentStep + 1,
+        steps.length - 1
       )
 
-    },
-    []
-  )
+    }))
 
+  }, [
+    canContinue,
+    steps.length
+  ])
 
+  const back = useCallback(() => {
 
-  const next = useCallback(
-    () => {
+    setState(previous => ({
 
-      if (!canContinue) {
-        return
-      }
+      ...previous,
 
-
-      setState(
-        previous => ({
-
-          ...previous,
-
-          currentStep:
-            Math.min(
-              previous.currentStep + 1,
-              totalSteps - 1
-            )
-
-        })
+      currentStep: Math.max(
+        previous.currentStep - 1,
+        0
       )
 
-    },
-    [
-      canContinue,
-      totalSteps
-    ]
-  )
+    }))
 
+  }, [])
 
+  const reset = useCallback(() => {
 
-  const back = useCallback(
-    () => {
+    setState({
 
-      setState(
-        previous => ({
+      currentStep: 0,
 
-          ...previous,
+      answers: {},
 
-          currentStep:
-            Math.max(
-              previous.currentStep - 1,
-              0
-            )
+      startedAt: Date.now()
 
-        })
-      )
+    })
 
-    },
-    []
-  )
-
-
-
-  const reset = useCallback(
-    () => {
-
-      setState({
-
-        currentStep: 0,
-
-        answers: {},
-
-        startedAt:
-          Date.now()
-
-      })
-
-    },
-    []
-  )
-
-
+  }, [])
 
   const getAnswer = useCallback(
-    (
-      questionId: string
-    ) => {
+
+    questionId => {
 
       return state.answers[
         questionId
       ]
 
     },
+
     [
       state.answers
     ]
+
   )
 
+  const getSummary = useCallback(() => {
 
+    return state.answers
 
-  const getSummary = useCallback(
-    () => {
-
-      return state.answers
-
-    },
-    [
-      state.answers
-    ]
-  )
-
-
+  }, [
+    state.answers
+  ])
 
   return {
+
+    currentStepData,
 
     currentQuestion,
 

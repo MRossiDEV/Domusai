@@ -1,21 +1,29 @@
 "use client"
 
-import { useState } from "react"
-import { AnimatePresence, motion } from "framer-motion"
+import {
+  useState
+} from "react"
+
+import {
+  AnimatePresence,
+  motion
+} from "framer-motion"
 
 import Question from "./Question"
 import Progress from "./Progress"
 import BottomActions from "./BottomActions"
-import Splash from "./Splash"
+import Splash from "../../../components/landing/Splash"
 import Summary from "./Summary"
 import Completion from "./Completion"
+import ContactForm from "./ContactForm"
 
-import { useWizard } from "../hooks/useWizard"
+import {
+  useWizard
+} from "../hooks/useWizard"
 
 import type {
   WizardConfig
 } from "../types"
-
 
 
 interface WizardProps {
@@ -33,20 +41,19 @@ export default function Wizard({
 }: WizardProps) {
 
 
-  const [showSplash, setShowSplash] =
-    useState(true)
+  const [
 
+    showSplash,
 
-  const [stage, setStage] =
-    useState<
-      "assessment" | "summary" | "complete"
-    >(
-      "assessment"
-    )
+    setShowSplash
+
+  ] = useState(true)
 
 
 
   const {
+
+    currentStepData,
 
     currentQuestion,
 
@@ -57,8 +64,6 @@ export default function Wizard({
     answers,
 
     isFirstStep,
-
-    isLastStep,
 
     canContinue,
 
@@ -76,18 +81,36 @@ export default function Wizard({
 
 
 
-  function handleNext() {
+  function handleContinue() {
+
+    next()
+
+  }
 
 
-    if (isLastStep) {
 
-      setStage(
-        "summary"
-      )
+  function handleSubmit(
 
-      return
+    contactData: Record<string,string>
+
+  ) {
+
+
+    const submission = {
+
+      assessment:
+        getSummary(),
+
+      contact:
+        contactData
 
     }
+
+
+    console.log(
+      "DOMUSAI Submission",
+      submission
+    )
 
 
     next()
@@ -96,54 +119,14 @@ export default function Wizard({
 
 
 
-  function handleSubmit() {
-
-
-    const assessment =
-      getSummary()
-
-
-
-    console.log(
-      "DOMUSAI Assessment",
-      assessment
-    )
-
-
-    /*
-      Future:
-
-      await fetch(
-        "/api/leads",
-        {
-          method:"POST",
-          body:
-            JSON.stringify(
-              assessment
-            )
-        }
-      )
-
-    */
-
-
-    setStage(
-      "complete"
-    )
-
-  }
-
-
 
   function handleRestart() {
 
     reset()
 
-    setStage(
-      "assessment"
-    )
-
   }
+
+
 
 
 
@@ -158,7 +141,8 @@ export default function Wizard({
         w-full
         flex-col
         overflow-hidden
-        bg-[#F8F7F3]
+        bg-[#111111]
+        text-[#F5F1E8]
       "
 
     >
@@ -184,179 +168,340 @@ export default function Wizard({
 
 
       {
-        stage === "assessment" && (
+        !showSplash && (
 
-          <>
-
-            <Progress
-
-              current={
-                currentStep + 1
-              }
-
-              total={
-                totalSteps
-              }
-
-            />
+          <AnimatePresence mode="wait">
 
 
+            {
+              currentStepData?.type === "intro" && (
 
-            <div
+                <motion.div
 
-              className="
-                flex-1
-                overflow-hidden
-              "
+                  key="intro"
 
-            >
+                  initial={{
+                    opacity:0
+                  }}
 
-              <AnimatePresence
-                mode="wait"
-              >
+                  animate={{
+                    opacity:1
+                  }}
 
-                {
-                  currentQuestion && (
+                  className="h-full"
 
-                    <motion.div
+                >
 
-                      key={
-                        currentQuestion.id
+                  <div className="
+                    flex
+                    h-full
+                    flex-col
+                    items-center
+                    justify-center
+                    px-6
+                    text-center
+                  ">
+
+
+                    {
+                      currentStepData.video && (
+
+                        <video
+
+                          src={
+                            currentStepData.video
+                          }
+
+                          poster={
+                            currentStepData.poster
+                          }
+
+                          autoPlay
+
+                          muted
+
+                          playsInline
+
+                          className="
+                            mb-8
+                            aspect-video
+                            w-full
+                            max-w-md
+                            rounded-3xl
+                            object-cover
+                          "
+
+                        />
+
+                      )
+                    }
+
+
+
+                    <h1 className="
+                      text-3xl
+                      font-light
+                    ">
+
+                      {
+                        currentStepData.title
                       }
 
-                      initial={{
-                        opacity:0,
-                        x:30
-                      }}
+                    </h1>
 
-                      animate={{
-                        opacity:1,
-                        x:0
-                      }}
 
-                      exit={{
-                        opacity:0,
-                        x:-30
-                      }}
 
-                      transition={{
-                        duration:0.35
-                      }}
+                    <p className="
+                      mt-4
+                      max-w-md
+                      text-[#9A9488]
+                    ">
+
+                      {
+                        currentStepData.description
+                      }
+
+                    </p>
+
+
+
+                    <button
+
+                      onClick={handleContinue}
 
                       className="
-                        h-full
+                        mt-10
+                        h-14
+                        w-full
+                        max-w-md
+                        rounded-full
+                        bg-[#C8AD7F]
+                        text-sm
+                        font-medium
+                        text-black
                       "
 
                     >
 
-                      <Question
+                      {
+                        currentStepData.cta ??
+                        "Comenzar"
+                      }
 
-                        question={
-                          currentQuestion
-                        }
-
-                        value={
-                          answers[
-                            currentQuestion.id
-                          ]?.value
-                        }
-
-                        onChange={
-                          value =>
-                            setAnswer(
-                              currentQuestion.id,
-                              value
-                            )
-                        }
-
-                      />
-
-                    </motion.div>
-
-                  )
-                }
-
-              </AnimatePresence>
+                    </button>
 
 
-            </div>
+                  </div>
+
+
+                </motion.div>
+
+              )
+            }
 
 
 
-            <BottomActions
-
-              onBack={
-                back
-              }
-
-              onNext={
-                handleNext
-              }
-
-              showBack={
-                !isFirstStep
-              }
-
-              disabled={
-                !canContinue
-              }
-
-              isLastStep={
-                isLastStep
-              }
-
-            />
 
 
-          </>
+
+
+            {
+              currentQuestion && (
+
+                <motion.div
+
+                  key={
+                    currentQuestion.id
+                  }
+
+                  initial={{
+                    opacity:0,
+                    x:30
+                  }}
+
+                  animate={{
+                    opacity:1,
+                    x:0
+                  }}
+
+                  exit={{
+                    opacity:0,
+                    x:-30
+                  }}
+
+                  className="
+                    flex
+                    h-full
+                    flex-col
+                  "
+
+                >
+
+
+                  <Progress
+
+                    current={
+                      currentStep + 1
+                    }
+
+                    total={
+                      totalSteps
+                    }
+
+                    showCounter
+
+                  />
+
+
+
+                  <div className="
+                    flex-1
+                    overflow-hidden
+                  ">
+
+
+                    <Question
+
+                      question={
+                        currentQuestion
+                      }
+
+                      value={
+                        answers[
+                          currentQuestion.id
+                        ]?.value
+                      }
+
+                      onChange={
+                        value =>
+                          setAnswer(
+                            currentQuestion.id,
+                            value
+                          )
+                      }
+
+                    />
+
+
+                  </div>
+
+
+
+
+                  <BottomActions
+
+                    onBack={back}
+
+                    onNext={handleContinue}
+
+                    showBack={
+                      !isFirstStep
+                    }
+
+                    disabled={
+                      !canContinue
+                    }
+
+                  />
+
+
+                </motion.div>
+
+              )
+            }
+
+
+
+
+
+
+
+
+            {
+              currentStepData?.type === "summary" && (
+
+                <motion.div
+
+                  key="summary"
+
+                  className="h-full"
+
+                >
+
+                  <Summary
+
+                    questions={
+                      config.steps
+                        .filter(
+                          step =>
+                            step.type === "question"
+                        )
+                    }
+
+                    answers={
+                      answers
+                    }
+
+                    onContinue={
+                      handleContinue
+                    }
+
+                  />
+
+
+                </motion.div>
+
+              )
+            }
+
+
+
+
+
+
+
+
+            {
+              currentStepData?.type === "contact" && (
+
+                <ContactForm
+
+                  onSubmit={
+                    handleSubmit
+                  }
+
+                />
+
+              )
+            }
+
+
+
+
+
+
+
+
+            {
+              currentStepData?.type === "completion" && (
+
+                <Completion
+
+                  onRestart={
+                    handleRestart
+                  }
+
+                />
+
+              )
+            }
+
+
+
+          </AnimatePresence>
 
         )
       }
-
-
-
-
-
-      {
-        stage === "summary" && (
-
-          <Summary
-
-            questions={
-              config.questions
-            }
-
-            answers={
-              answers
-            }
-
-            onSubmit={
-              handleSubmit
-            }
-
-          />
-
-        )
-      }
-
-
-
-
-
-      {
-        stage === "complete" && (
-
-          <Completion
-
-            onRestart={
-              handleRestart
-            }
-
-          />
-
-        )
-      }
-
 
 
     </main>

@@ -2,21 +2,28 @@
 
 import { motion } from "framer-motion"
 
+import {
+  Check
+} from "lucide-react"
+
 import type {
   WizardAnswer,
-  WizardQuestion
+  QuestionStep
 } from "../types"
+
 
 
 interface SummaryProps {
 
-  questions: WizardQuestion[]
+  questions: QuestionStep[]
 
   answers: Record<string, WizardAnswer>
 
-  onSubmit: () => void
+  onContinue: () => void
 
 }
+
+
 
 
 
@@ -26,54 +33,111 @@ export default function Summary({
 
   answers,
 
-  onSubmit
+  onContinue
 
 }: SummaryProps) {
 
 
-  function getLabel(
-    question: WizardQuestion,
-    value: string | string[] | number
+
+  function getQuestion(
+
+    questionId: string
+
   ) {
 
+    return questions.find(
 
-    if (!question.options) {
-      return String(value)
-    }
+      question =>
+        question.id === questionId
 
-
-    if (Array.isArray(value)) {
-
-      return value
-        .map(item =>
-          question.options?.find(
-            option =>
-              option.value === item
-          )?.label ?? item
-        )
-        .join(", ")
-
-    }
-
-
-    return (
-      question.options.find(
-        option =>
-          option.value === value
-      )?.label
-      ??
-      String(value)
     )
 
   }
 
 
 
-  const completedAnswers =
-    questions.filter(
-      question =>
-        answers[question.id]
+
+
+
+
+  function getLabel(
+
+    question: QuestionStep | undefined,
+
+    value:
+      | string
+      | string[]
+      | number
+
+  ) {
+
+
+    if (!question?.options) {
+
+      return String(value)
+
+    }
+
+
+
+
+    if (Array.isArray(value)) {
+
+      return value
+
+        .map(item =>
+
+          question.options?.find(
+
+            option =>
+              option.value === item
+
+          )?.label ?? item
+
+        )
+
+        .join(", ")
+
+    }
+
+
+
+
+
+    return (
+
+      question.options.find(
+
+        option =>
+          option.value === value
+
+      )?.label
+
+      ??
+
+      String(value)
+
     )
+
+  }
+
+
+
+
+
+  const collectedAnswers =
+
+    Object.values(
+
+      answers
+
+    )
+
+
+
+
+
+
 
 
 
@@ -81,76 +145,109 @@ export default function Summary({
 
     <motion.div
 
+
       initial={{
-        opacity: 0,
-        y: 20
+
+        opacity:0,
+
+        y:20
+
       }}
+
+
 
       animate={{
-        opacity: 1,
-        y: 0
+
+        opacity:1,
+
+        y:0
+
       }}
 
+
+
       transition={{
-        duration: 0.5
+
+        duration:0.4
+
       }}
+
+
 
       className="
         flex
-        min-h-full
+        h-full
         flex-col
+        overflow-hidden
         px-6
-        pb-36
       "
 
     >
 
+
+
+
+
       <div
+
         className="
+          shrink-0
           pt-10
-          pb-8
+          pb-6
         "
+
       >
 
+
         <span
+
           className="
-            text-xs
+            text-[10px]
             uppercase
-            tracking-[0.25em]
-            text-neutral-400
+            tracking-[0.35em]
+            text-[#C8AD7F]
           "
+
         >
-          Perfil inmobiliario
+
+          Perfil de adquisición
+
         </span>
 
 
+
+
         <h1
+
           className="
-            mt-5
-            text-3xl
-            font-medium
-            leading-tight
-            tracking-tight
-            text-neutral-950
+            mt-6
+            text-[34px]
+            font-light
+            tracking-[-0.04em]
           "
+
         >
 
-          Tu búsqueda personalizada
+          Resumen de evaluación
 
         </h1>
 
 
+
+
         <p
+
           className="
-            mt-4
+            mt-5
             text-base
             leading-relaxed
-            text-neutral-500
+            text-[#9A9488]
           "
+
         >
 
-          Revisá la información antes de enviar
-          tu evaluación.
+          Revisá los datos recopilados antes
+          de continuar con la solicitud.
 
         </p>
 
@@ -159,130 +256,243 @@ export default function Summary({
 
 
 
+
+
+
+
+
+
       <div
+
         className="
+          flex-1
+          overflow-y-auto
           space-y-3
+          pb-6
         "
+
       >
 
+
+
+
+
         {
-          completedAnswers.map(
+          collectedAnswers.map(
+
             answer => {
 
+
               const question =
-                questions.find(
-                  item =>
-                    item.id === answer.questionId
+
+                getQuestion(
+
+                  answer.questionId
+
                 )
 
-
-              if (!question) {
-                return null
-              }
 
 
               return (
 
-                <div
+                <motion.div
+
 
                   key={
                     answer.questionId
                   }
 
+
+
+                  initial={{
+
+                    opacity:0,
+
+                    y:10
+
+                  }}
+
+
+
+                  animate={{
+
+                    opacity:1,
+
+                    y:0
+
+                  }}
+
+
+
                   className="
-                    rounded-2xl
+                    rounded-[22px]
                     border
-                    border-neutral-200
-                    bg-white
+                    border-white/[0.08]
+                    bg-[#181818]
                     p-5
                   "
 
                 >
 
-                  <p
+
+
+
+
+                  <div
+
                     className="
-                      text-xs
-                      uppercase
-                      tracking-[0.2em]
-                      text-neutral-400
+                      flex
+                      items-center
+                      justify-between
                     "
+
                   >
 
-                    {question.category}
 
-                  </p>
+                    <span
+
+                      className="
+                        text-[10px]
+                        uppercase
+                        tracking-[0.3em]
+                        text-[#C8AD7F]
+                      "
+
+                    >
+
+                      {
+                        question?.category ??
+                        "Información"
+                      }
+
+                    </span>
+
+
+
+                    <Check
+
+                      size={14}
+
+                      className="
+                        text-[#C8AD7F]
+                      "
+
+                    />
+
+
+                  </div>
+
+
+
+
 
 
                   <h3
+
                     className="
-                      mt-2
+                      mt-3
                       text-sm
-                      text-neutral-500
+                      text-[#9A9488]
                     "
+
                   >
 
-                    {question.title}
+                    {
+                      question?.title ??
+                      answer.questionId
+                    }
 
                   </h3>
 
 
+
+
+
+
                   <p
+
                     className="
                       mt-2
                       text-base
                       font-medium
-                      text-neutral-900
+                      text-[#F5F1E8]
                     "
+
                   >
 
                     {
                       getLabel(
+
                         question,
+
                         answer.value
+
                       )
                     }
 
                   </p>
 
 
-                </div>
+
+                </motion.div>
+
 
               )
 
             }
+
           )
+
         }
+
+
+
+
 
 
       </div>
 
 
 
+
+
+
+
       <button
+
 
         type="button"
 
-        onClick={onSubmit}
+
+        onClick={
+
+          onContinue
+
+        }
+
 
         className="
-          mt-8
           h-14
-          w-full
+          shrink-0
           rounded-full
-          bg-neutral-900
+          bg-[#C8AD7F]
           text-sm
           font-medium
           tracking-wide
-          text-white
+          text-[#111111]
           transition
           active:scale-[0.98]
         "
 
       >
 
-        Enviar evaluación
+        Continuar evaluación
+
 
       </button>
+
+
+
 
 
     </motion.div>

@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { Menu, X, ArrowRight } from "lucide-react";
 
 const navigation = [
   {
@@ -19,7 +20,7 @@ const navigation = [
     href: "#servicios",
   },
   {
-    label: "Compradores Internacionales",
+    label: "Internacional",
     href: "#internacional",
   },
   {
@@ -29,122 +30,283 @@ const navigation = [
 ];
 
 export default function Header() {
+  const router = useRouter();
+
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+
+  const [visible, setVisible] = useState(true);
+
+  const [lastScroll, setLastScroll] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
+    function handleScroll() {
+      const current = window.scrollY;
 
-    onScroll();
+      if (current < 80) {
+        setVisible(true);
+      } else {
+        setVisible(current < lastScroll);
+      }
 
-    window.addEventListener("scroll", onScroll);
+      setLastScroll(current);
+    }
 
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("scroll", handleScroll);
+
+    return () =>
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+  }, [lastScroll]);
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "border-b border-white/10 bg-black/60 backdrop-blur-xl"
-            : "bg-black/70"
-        }`}
+      <motion.header
+        initial={{
+          y: -100,
+        }}
+        animate={{
+          y: visible ? 0 : -120,
+        }}
+        transition={{
+          duration: 0.35,
+        }}
+        className="
+          fixed
+          top-5
+          left-1/2
+          z-50
+          w-[calc(100%-24px)]
+          max-w-7xl
+          -translate-x-1/2
+        "
       >
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          {/* Logo */}
-
+        <div
+          className="
+            flex
+            h-16
+            items-center
+            justify-between
+            rounded-full
+            border
+            border-white/10
+            bg-black/55
+            px-6
+            backdrop-blur-2xl
+            shadow-[0_20px_60px_rgba(0,0,0,0.35)]
+          "
+        >
           <Link
             href="/"
-            aria-label="Domusai - Inicio"
-            className="text-3xl font-light tracking-[0.42em] text-white transition hover:text-[#d7c3a0]"
+            className="
+              text-xl
+              font-light
+              tracking-[0.35em]
+              text-white
+            "
           >
             DOMUSAI
           </Link>
 
-          {/* Desktop Navigation */}
-
           <nav
-            aria-label="Navegación principal"
-            className="hidden items-center gap-10 lg:flex"
+            className="
+              hidden
+              items-center
+              gap-8
+              lg:flex
+            "
           >
             {navigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-xs uppercase tracking-[0.18em] text-white/90 transition-colors duration-300 hover:text-[#d7c3a0]"
+                className="
+                  text-xs
+                  uppercase
+                  tracking-[0.2em]
+                  text-white/70
+                  transition
+                  hover:text-[#C8AD7F]
+                "
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          {/* Desktop CTA */}
-
-          <Button
-            size="lg"
-            onClick={() => (window.location.href = "/wizard")}
-            aria-label="Comenzar consulta privada"
-            className="hidden rounded-sm bg-[#d7c3a0] px-8 py-7 text-xs font-semibold uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-white lg:flex"
+          <button
+            onClick={() =>
+              router.push("/wizard")
+            }
+            className="
+              hidden
+              h-11
+              items-center
+              gap-2
+              rounded-full
+              bg-[#C8AD7F]
+              px-6
+              text-xs
+              font-semibold
+              uppercase
+              tracking-[0.18em]
+              text-black
+              transition
+              hover:scale-[1.03]
+              active:scale-95
+              lg:flex
+            "
           >
-            Consulta Privada
-          </Button>
+            Consulta
 
-          {/* Mobile Toggle */}
+            <ArrowRight size={16} />
+          </button>
 
           <button
-            type="button"
-            aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="text-white transition-colors duration-300 hover:text-[#d7c3a0] lg:hidden"
+            onClick={() =>
+              setMobileOpen(
+                !mobileOpen
+              )
+            }
+            className="
+              lg:hidden
+            "
           >
-            {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+            {mobileOpen ? (
+              <X
+                size={26}
+                color="white"
+              />
+            ) : (
+              <Menu
+                size={26}
+                color="white"
+              />
+            )}
           </button>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              onClick={() =>
+                setMobileOpen(false)
+              }
+              className="
+                fixed
+                inset-0
+                z-40
+                bg-black/50
+                backdrop-blur-sm
+              "
+            />
 
-      <div
-        id="mobile-menu"
-        className={`fixed inset-0 z-40 bg-black/95 transition-all duration-500 lg:hidden ${
-          mobileOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
-        }`}
-      >
-        <nav
-          aria-label="Menú móvil"
-          className="flex h-full flex-col items-center justify-center gap-10"
-        >
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className="text-lg uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:text-[#d7c3a0]"
+            <motion.div
+              initial={{
+                y: "100%",
+              }}
+              animate={{
+                y: 0,
+              }}
+              exit={{
+                y: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 30,
+              }}
+              className="
+                fixed
+                bottom-0
+                left-0
+                right-0
+                z-50
+                rounded-t-[34px]
+                border-t
+                border-white/10
+                bg-[#151515]
+                px-8
+                pb-10
+                pt-8
+              "
             >
-              {item.label}
-            </Link>
-          ))}
+              <div
+                className="
+                  mx-auto
+                  mb-8
+                  h-1.5
+                  w-16
+                  rounded-full
+                  bg-white/10
+                "
+              />
 
-          <Button
-            size="lg"
-            aria-label="Comenzar consulta privada"
-            className="mt-6 rounded-sm bg-[#d7c3a0] px-8 py-7 text-xs font-semibold uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-white"
-            onClick={() => {
-              setMobileOpen(false);
-              window.location.href = "/wizard";
-            }}
-          >
-            Consulta Privada
-          </Button>
-        </nav>
-      </div>
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-6
+                "
+              >
+                {navigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() =>
+                      setMobileOpen(
+                        false
+                      )
+                    }
+                    className="
+                      text-lg
+                      font-light
+                      text-white
+                    "
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  router.push("/wizard");
+                }}
+                className="
+                  mt-10
+                  flex
+                  h-14
+                  w-full
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-[#C8AD7F]
+                  text-sm
+                  font-semibold
+                  uppercase
+                  tracking-[0.18em]
+                  text-black
+                "
+              >
+                Consulta Privada
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

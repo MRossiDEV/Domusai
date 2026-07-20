@@ -1,6 +1,8 @@
 "use client"
 
-import { useMemo } from "react"
+import {
+  useMemo
+} from "react"
 
 import {
   motion
@@ -9,14 +11,14 @@ import {
 import OptionCard from "./OptionCard"
 
 import type {
-  WizardQuestion
+  QuestionStep
 } from "../types"
 
 
 
 interface QuestionProps {
 
-  question: WizardQuestion
+  question: QuestionStep
 
   value?:
     | string
@@ -34,6 +36,8 @@ interface QuestionProps {
 
 
 
+
+
 export default function Question({
 
   question,
@@ -45,60 +49,84 @@ export default function Question({
 }: QuestionProps) {
 
 
+
   const selectedValues =
+
     useMemo(() => {
 
-      if (
-        Array.isArray(value)
-      ) {
+      if (Array.isArray(value)) {
+
         return value
+
       }
 
 
-      if (
-        typeof value === "string"
-      ) {
+      if (typeof value === "string") {
+
         return [value]
+
       }
 
 
       return []
 
     }, [
+
       value
+
     ])
 
 
 
 
+
+
+
   function handleOptionSelect(
+
     optionValue: string
+
   ) {
 
 
     if (
-      question.type === "multiple"
+
+      question.questionType === "multiple"
+
     ) {
 
 
       const updated =
+
         selectedValues.includes(
+
           optionValue
+
         )
 
           ? selectedValues.filter(
+
               item =>
                 item !== optionValue
+
             )
 
-          : [
+          :
+
+            [
+
               ...selectedValues,
+
               optionValue
+
             ]
 
 
+
       onChange(
+
         updated
+
       )
 
 
@@ -107,11 +135,17 @@ export default function Question({
     }
 
 
+
     onChange(
+
       optionValue
+
     )
 
   }
+
+
+
 
 
 
@@ -120,20 +154,36 @@ export default function Question({
 
     <motion.div
 
+
       initial={{
+
         opacity:0,
+
         y:20
+
       }}
+
+
 
       animate={{
+
         opacity:1,
+
         y:0
+
       }}
 
+
+
       transition={{
+
         duration:0.45,
+
         ease:"easeOut"
+
       }}
+
+
 
       className="
         flex
@@ -142,6 +192,9 @@ export default function Question({
       "
 
     >
+
+
+
 
 
 
@@ -156,26 +209,29 @@ export default function Question({
       >
 
 
-        {
-          question.category && (
 
-            <span
 
-              className="
-                text-[10px]
-                uppercase
-                tracking-[0.35em]
-                text-neutral-400
-              "
 
-            >
+        <span
 
-              {question.category}
+          className="
+            text-[10px]
+            uppercase
+            tracking-[0.35em]
+            text-[#C8AD7F]
+          "
 
-            </span>
+        >
 
-          )
-        }
+          {
+            question.category
+          }
+
+        </span>
+
+
+
+
 
 
 
@@ -188,14 +244,19 @@ export default function Question({
             font-light
             leading-[1.12]
             tracking-[-0.04em]
-            text-neutral-950
+            text-white
           "
 
         >
 
-          {question.title}
+          {
+            question.title
+          }
 
         </h1>
+
+
+
 
 
 
@@ -215,7 +276,9 @@ export default function Question({
 
             >
 
-              {question.subtitle}
+              {
+                question.subtitle
+              }
 
             </p>
 
@@ -230,6 +293,10 @@ export default function Question({
 
 
 
+
+
+
+
       <div
 
         className="
@@ -237,29 +304,44 @@ export default function Question({
           overflow-y-auto
           px-6
           pb-36
-          pt-2
-          scrollbar-none
         "
 
       >
 
 
+
+
+
+
         {
           question.options && (
+
 
             <motion.div
 
               initial={{
+
                 opacity:0
+
               }}
+
+
 
               animate={{
+
                 opacity:1
+
               }}
 
+
+
               transition={{
+
                 delay:0.1
+
               }}
+
+
 
               className="
                 space-y-3
@@ -267,121 +349,159 @@ export default function Question({
 
             >
 
+
+
               {
                 question.options.map(
+
                   option => (
 
                     <OptionCard
+
 
                       key={
                         option.value
                       }
 
+
+
                       option={
                         option
                       }
 
+
+
                       selected={
+
                         selectedValues.includes(
+
                           option.value
+
                         )
+
                       }
+
+
 
                       multiple={
-                        question.type === "multiple"
+
+                        question.questionType === "multiple"
+
                       }
 
+
+
                       onSelect={
+
                         handleOptionSelect
+
                       }
+
 
                     />
 
                   )
+
                 )
+
               }
+
 
 
             </motion.div>
 
           )
+
         }
+
+
+
+
 
 
 
 
 
         {
+
           (
-            question.type === "text" ||
-            question.type === "number"
-          ) && (
+
+            question.questionType === "text" ||
+
+            question.questionType === "number"
+
+          )
+
+          && (
 
             <textarea
 
+
               value={
+
                 String(
+
                   value ?? ""
+
                 )
+
               }
+
 
 
               onChange={
+
                 event =>
+
                   onChange(
+
                     event.target.value
+
                   )
+
               }
+
 
 
               placeholder={
+
                 question.placeholder
+
               }
 
 
+
               className="
-
                 min-h-[180px]
-
                 w-full
-
                 resize-none
-
                 rounded-[24px]
-
                 border
-
                 border-[#E7E3DA]
-
                 bg-white/80
-
                 p-6
-
                 text-base
-
                 leading-relaxed
-
                 text-neutral-900
-
-                shadow-[0_4px_20px_rgba(0,0,0,0.03)]
-
                 outline-none
-
                 transition
-
                 placeholder:text-neutral-400
-
                 focus:border-neutral-900
-
               "
 
             />
 
           )
+
         }
 
 
+
+
+
       </div>
+
+
 
 
 

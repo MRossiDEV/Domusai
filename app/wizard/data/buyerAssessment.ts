@@ -1,723 +1,586 @@
-import type { WizardConfig } from "../types"
-
+import type {
+  WizardConfig
+} from "../types"
 
 export const buyerAssessment: WizardConfig = {
 
   id: "buyer-assessment",
 
-  title: "Encontrá una propiedad alineada con tu forma de vivir.",
+  title:
+    "Solicitud de Representación como Comprador",
 
   description:
-    "Una evaluación personalizada para comprender tus necesidades y preparar una selección relevante.",
-
+    "Complete la siguiente evaluación para que nuestro equipo pueda analizar su perfil y asignarle un asesor especializado.",
 
   settings: {
+
     showProgress: true,
+
     allowBack: true,
+
     saveProgress: true,
+
     autoSave: true,
-    mobileAppMode: true,
-    showStepCounter: false
+
+    showStepCounter: true,
+
+    mobileAppMode: true
+
   },
 
-
-  questions: [
+  steps: [
 
     {
-      id: "buyer_intention",
+      id: "welcome",
+
+      type: "intro",
+
+      title:
+        "Bienvenido a DOMUSAI",
+
+      subtitle:
+        "Asistente Privado de Adquisición Inmobiliaria",
+
+      description:
+        "Antes de comenzar, uno de nuestros asistentes virtuales le explicará brevemente cómo funciona el proceso de evaluación y cómo utilizaremos la información proporcionada para preparar una búsqueda personalizada.",
+
+      video: "/videos/avatar-intro.mp4",
+
+      poster: "/images/avatar-poster.jpg",
+
+      cta: "Comenzar evaluación"
+    },
+
+    {
+      id: "buyer_objective",
+
+      type: "question",
 
       category: "profile",
 
-      type: "single",
+      questionType: "single",
 
       title:
-        "¿En qué etapa te encontrás actualmente?",
+        "¿Cuál es el objetivo principal de esta adquisición?",
 
       subtitle:
-        "Esto nos ayuda a entender cómo acompañarte.",
-
+        "Seleccione la opción que mejor describa su intención.",
 
       required: true,
-
 
       options: [
 
         {
-          value: "primary_home",
-
-          label:
-            "Busco mi próxima vivienda",
-
-          description:
-            "Un lugar pensado para mi vida diaria.",
-
-          tags: [
-            "living",
-            "personal"
-          ],
-
-          score: 3
+          value: "primary_residence",
+          label: "Residencia principal"
         },
-
 
         {
           value: "investment",
-
-          label:
-            "Quiero invertir en una propiedad",
-
-          description:
-            "Busco una oportunidad con potencial.",
-
-          tags: [
-            "investment"
-          ],
-
-          score: 4
+          label: "Inversión patrimonial"
         },
-
 
         {
           value: "relocation",
-
-          label:
-            "Estoy evaluando mudarme",
-
-          description:
-            "Un cambio de zona o estilo de vida.",
-
-          tags: [
-            "relocation"
-          ],
-
-          score: 3
+          label: "Relocalización a Uruguay"
         },
-
 
         {
           value: "second_home",
+          label: "Segunda residencia"
+        },
 
-          label:
-            "Busco una segunda residencia",
-
-          description:
-            "Un espacio para disfrutar nuevos momentos.",
-
-          tags: [
-            "lifestyle"
-          ],
-
-          score: 3
+        {
+          value: "corporate",
+          label: "Compra corporativa"
         }
 
-      ],
-
-
-      aiContext: {
-
-        importance:
-          "high",
-
-        purpose:
-          "segmentation",
-
-        tags: [
-          "buyer_type"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "cards",
-
-        animation:
-          "slide",
-
-        fullScreen:
-          true
-
-      }
+      ]
 
     },
 
-
     {
-      id: "household",
+      id: "purchase_stage",
+
+      type: "question",
 
       category: "profile",
 
-      type: "single",
+      questionType: "single",
 
       title:
-        "¿Quién disfrutará principalmente de esta propiedad?",
-
+        "¿En qué etapa se encuentra actualmente?",
 
       required: true,
-
 
       options: [
 
         {
-          value: "alone",
-
-          label:
-            "Solo yo",
-
-          score: 1
+          value: "ready",
+          label: "Listo para comprar"
         },
 
+        {
+          value: "shortlist",
+          label: "Evaluando opciones concretas"
+        },
+
+        {
+          value: "planning",
+          label: "Planificando la compra"
+        },
+
+        {
+          value: "research",
+          label: "Investigación inicial"
+        }
+
+      ]
+
+    },
+
+    {
+      id: "decision_makers",
+
+      type: "question",
+
+      category: "profile",
+
+      questionType: "single",
+
+      title:
+        "¿Quién participa en la decisión de compra?",
+
+      required: true,
+
+      options: [
+
+        {
+          value: "self",
+          label: "Solo yo"
+        },
 
         {
           value: "couple",
-
-          label:
-            "Pareja",
-
-          score: 2
+          label: "Pareja"
         },
-
 
         {
           value: "family",
-
-          label:
-            "Familia",
-
-          score: 3
+          label: "Familia"
         },
 
-
         {
-          value: "rental",
-
-          label:
-            "Renta o inversión",
-
-          score: 4
+          value: "partners",
+          label: "Socios o inversionistas"
         }
 
-      ],
-
-
-      aiContext: {
-
-        importance:
-          "medium",
-
-        purpose:
-          "personalization",
-
-        tags: [
-          "household"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "cards",
-
-        animation:
-          "slide",
-
-        fullScreen:
-          true
-
-      }
+      ]
 
     },
 
-
     {
-      id: "current_location",
+      id: "current_country",
 
-      category: "situation",
+      type: "question",
 
-      type: "location",
+      category: "location",
+
+      questionType: "single",
 
       title:
-        "¿Dónde estás viviendo actualmente?",
-
+        "¿Dónde reside actualmente?",
 
       required: true,
-
 
       options: [
 
         {
-          value: "montevideo",
-
-          label:
-            "Montevideo"
+          value: "uruguay",
+          label: "Uruguay"
         },
-
 
         {
-          value: "interior",
-
-          label:
-            "Interior del país"
+          value: "latin_america",
+          label: "Latinoamérica"
         },
-
 
         {
-          value: "abroad",
-
-          label:
-            "Exterior"
+          value: "north_america",
+          label: "Norteamérica"
         },
 
+        {
+          value: "europe",
+          label: "Europa"
+        },
 
         {
           value: "other",
-
-          label:
-            "Otra situación"
+          label: "Otro"
         }
 
-      ],
-
-
-      aiContext: {
-
-        importance:
-          "high",
-
-        purpose:
-          "qualification",
-
-        tags: [
-          "origin",
-          "relocation"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "cards",
-
-        animation:
-          "slide",
-
-        fullScreen:
-          true
-
-      }
+      ]
 
     },
-
 
     {
       id: "property_type",
 
+      type: "question",
+
       category: "property",
 
-      type: "multiple",
+      questionType: "multiple",
 
       title:
-        "¿Qué tipo de propiedad estás buscando?",
-
+        "¿Qué tipo de propiedad desea evaluar?",
 
       required: true,
-
 
       options: [
 
         {
           value: "apartment",
-
-          label:
-            "Apartamento"
+          label: "Apartamento"
         },
-
 
         {
           value: "house",
-
-          label:
-            "Casa"
+          label: "Casa"
         },
 
+        {
+          value: "penthouse",
+          label: "Penthouse"
+        },
 
         {
           value: "land",
-
-          label:
-            "Terreno"
+          label: "Terreno"
         },
-
 
         {
           value: "rural",
-
-          label:
-            "Propiedad rural"
-        },
-
-
-        {
-          value: "open",
-
-          label:
-            "Estoy abierto a recomendaciones"
+          label: "Propiedad rural"
         }
 
-      ],
-
-
-      aiContext: {
-
-        importance:
-          "high",
-
-        purpose:
-          "recommendation",
-
-        tags: [
-          "property_type"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "cards",
-
-        animation:
-          "slide",
-
-        fullScreen:
-          true
-
-      }
+      ]
 
     },
 
-
     {
-      id: "lifestyle_preferences",
+      id: "preferred_locations",
 
-      category: "lifestyle",
+      type: "question",
 
-      type: "multiple",
+      category: "location",
+
+      questionType: "multiple",
 
       title:
-        "¿Qué características son importantes para vos?",
+        "¿Qué mercados desea que analicemos?",
 
-
-      options: [
-
-        {
-          value: "natural_light",
-
-          label:
-            "Luz natural"
-        },
-
-
-        {
-          value: "open_spaces",
-
-          label:
-            "Espacios amplios"
-        },
-
-
-        {
-          value: "garden",
-
-          label:
-            "Exterior o jardín"
-        },
-
-
-        {
-          value: "view",
-
-          label:
-            "Vista"
-        },
-
-
-        {
-          value: "security",
-
-          label:
-            "Seguridad"
-        },
-
-
-        {
-          value: "garage",
-
-          label:
-            "Garage"
-        },
-
-
-        {
-          value: "services",
-
-          label:
-            "Cerca de servicios"
-        }
-
-      ],
-
-
-      aiContext: {
-
-        importance:
-          "medium",
-
-        purpose:
-          "recommendation",
-
-        tags: [
-          "lifestyle"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "grid",
-
-        animation:
-          "scale",
-
-        fullScreen:
-          true
-
-      }
-
-    },
-
-
-    {
-      id: "budget",
-
-      category: "financial",
-
-      type: "currency",
-
-      title:
-        "¿Cuál es tu rango de inversión?",
-
+      subtitle:
+        "Puede seleccionar varias opciones.",
 
       required: true,
 
+      options: [
+
+        {
+          value: "carrasco",
+          label: "Carrasco"
+        },
+
+        {
+          value: "punta_gorda",
+          label: "Punta Gorda"
+        },
+
+        {
+          value: "pocitos",
+          label: "Pocitos"
+        },
+
+        {
+          value: "punta_carretas",
+          label: "Punta Carretas"
+        },
+
+        {
+          value: "punta_del_este",
+          label: "Punta del Este"
+        },
+
+        {
+          value: "jose_ignacio",
+          label: "José Ignacio"
+        },
+
+        {
+          value: "other",
+          label: "Otra ubicación"
+        }
+
+      ]
+
+    },
+
+    {
+      id: "investment_range",
+
+      type: "question",
+
+      category: "financial",
+
+      questionType: "single",
+
+      title:
+        "¿Cuál es el rango estimado de inversión?",
+
+      required: true,
 
       options: [
 
         {
-          value: "under_100k",
-
-          label:
-            "Hasta USD 100.000"
+          value: "300k",
+          label: "Hasta USD 300.000"
         },
 
-
         {
-          value: "100_250k",
-
-          label:
-            "USD 100.000 - 250.000"
+          value: "600k",
+          label: "USD 300.000 - 600.000"
         },
 
-
         {
-          value: "250_500k",
-
-          label:
-            "USD 250.000 - 500.000"
+          value: "1m",
+          label: "USD 600.000 - 1.000.000"
         },
 
-
         {
-          value: "500k_plus",
-
-          label:
-            "Más de USD 500.000"
+          value: "3m",
+          label: "USD 1.000.000 - 3.000.000"
         },
 
+        {
+          value: "3m_plus",
+          label: "Más de USD 3.000.000"
+        },
 
         {
-          value: "unknown",
-
-          label:
-            "Prefiero conversarlo"
+          value: "private",
+          label: "Prefiero conversarlo personalmente"
         }
 
-      ],
-
-
-      aiContext: {
-
-        importance:
-          "high",
-
-        purpose:
-          "qualification",
-
-        tags: [
-          "budget"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "cards",
-
-        animation:
-          "slide",
-
-        fullScreen:
-          true
-
-      }
+      ]
 
     },
 
+    {
+      id: "funding",
+
+      type: "question",
+
+      category: "financial",
+
+      questionType: "single",
+
+      title:
+        "¿Cómo prevé financiar la adquisición?",
+
+      required: true,
+
+      options: [
+
+        {
+          value: "cash",
+          label: "Fondos propios"
+        },
+
+        {
+          value: "mortgage_approved",
+          label: "Financiación aprobada"
+        },
+
+        {
+          value: "mortgage_process",
+          label: "Financiación en proceso"
+        },
+
+        {
+          value: "corporate",
+          label: "Compra corporativa"
+        },
+
+        {
+          value: "private",
+          label: "Prefiero conversarlo"
+        }
+
+      ]
+
+    },
 
     {
       id: "timeline",
 
+      type: "question",
+
       category: "timeline",
 
-      type: "single",
+      questionType: "single",
 
       title:
-        "¿Cuándo te gustaría avanzar?",
+        "¿En qué plazo espera concretar la compra?",
 
+      required: true,
 
       options: [
 
         {
-          value: "immediate",
-
-          label:
-            "Estoy listo para comprar"
+          value: "30_days",
+          label: "Dentro de 30 días"
         },
 
-
         {
-          value: "months",
-
-          label:
-            "En los próximos meses"
+          value: "90_days",
+          label: "Dentro de 3 meses"
         },
 
+        {
+          value: "6_months",
+          label: "Dentro de 6 meses"
+        },
 
         {
-          value: "exploring",
-
-          label:
-            "Estoy explorando opciones"
+          value: "flexible",
+          label: "Sin fecha definida"
         }
 
-      ],
+      ]
 
+    },
 
-      aiContext: {
+    {
+      id: "lifestyle",
 
-        importance:
-          "high",
+      type: "question",
 
-        purpose:
-          "qualification",
+      category: "lifestyle",
 
-        tags: [
-          "urgency"
-        ]
+      questionType: "multiple",
+
+      title:
+        "¿Qué características son prioritarias para usted?",
+
+      options: [
+
+        {
+          value: "security",
+          label: "Seguridad"
+        },
+
+        {
+          value: "architecture",
+          label: "Arquitectura"
+        },
+
+        {
+          value: "waterfront",
+          label: "Vista al agua"
+        },
+
+        {
+          value: "garden",
+          label: "Jardín"
+        },
+
+        {
+          value: "privacy",
+          label: "Privacidad"
+        },
+
+        {
+          value: "office",
+          label: "Home Office"
+        },
+
+        {
+          value: "garage",
+          label: "Garage"
+        },
+
+        {
+          value: "smart_home",
+          label: "Tecnología Smart Home"
+        }
+
+      ]
+
+    },
+
+    {
+      id: "additional_notes",
+
+      type: "question",
+
+      category: "additional",
+
+      questionType: "text",
+
+      title:
+        "¿Hay algún requerimiento importante que nuestro equipo deba conocer?",
+
+      placeholder:
+        "Comparta cualquier detalle que considere relevante para la búsqueda.",
+
+      validation: {
+
+        maxLength: 1000
 
       },
 
-
       ui: {
 
-        layout:
-          "cards",
+        layout: "input",
 
-        animation:
-          "slide",
+        animation: "fade",
 
-        fullScreen:
-          true
+        allowSkip: true
 
       }
 
     },
 
+    {
+      id: "summary",
+
+      type: "summary"
+
+    },
 
     {
-      id: "additional_notes",
+      id: "contact",
 
-      category: "additional",
+      type: "contact"
 
-      type: "text",
+    },
+
+    {
+      id: "processing",
+
+      type: "processing",
 
       title:
-        "¿Hay algo más que deberíamos saber?",
+        "Preparando su perfil de adquisición"
 
+    },
 
-      placeholder:
-        "Contanos cualquier detalle importante sobre tu búsqueda...",
+    {
+      id: "completed",
 
-
-      validation: {
-
-        maxLength:
-          500
-
-      },
-
-
-      aiContext: {
-
-        importance:
-          "high",
-
-        purpose:
-          "personalization",
-
-        tags: [
-          "free_context"
-        ]
-
-      },
-
-
-      ui: {
-
-        layout:
-          "input",
-
-        animation:
-          "fade",
-
-        fullScreen:
-          true,
-
-        allowSkip:
-          true
-
-      }
+      type: "completion"
 
     }
 

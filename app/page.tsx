@@ -6,6 +6,10 @@ import Services from "@/components/landing/Services";
 import InternationalBuyers from "@/components/landing/InternationalBuyer";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
+import BottomNavigation from "@/components/layout/BottomNavigation";
+import AppShell from "@/components/landing/AppShell";
+
+import AppSplash from "@/components/layout/AppSplash";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -51,32 +55,125 @@ const structuredData = {
 };
 
 export default function HomePage() {
+
+
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
-        }}
-      />
+
+    <AppShell>
+
 
       <Header />
 
-      <main className="overflow-hidden">
-        <Hero />
 
-        <Process />
 
-        <FeaturedProperties />
+      <main
 
-        <Services />
+        className="
+          flex-1
+          overflow-y-auto
+          pb-24
+          scrollbar-none
+        "
 
-        <InternationalBuyers />
+      >
 
-        <FinalCTA />
+
+        <section
+          className="
+            min-h-[100dvh]
+            snap-start
+          "
+        >
+
+          <Hero />
+
+        </section>
+
+
+
+        <section
+          className="
+            min-h-screen
+            snap-start
+          "
+        >
+
+          <Process />
+
+        </section>
+
+
+
+
+        <section
+          className="
+            min-h-screen
+            snap-start
+          "
+        >
+
+          <FeaturedProperties />
+
+        </section>
+
+
+
+
+        <section
+          className="
+            min-h-screen
+            snap-start
+          "
+        >
+
+          <Services />
+
+        </section>
+
+
+
+
+        <section
+          className="
+            min-h-screen
+            snap-start
+          "
+        >
+
+          <InternationalBuyers />
+
+        </section>
+
+
+
+
+        <section
+          className="
+            min-h-screen
+            snap-start
+          "
+        >
+
+          <FinalCTA />
+
+        </section>
+
+
       </main>
 
+
+
+
+
       <Footer />
-    </>
-  );
+
+
+
+      <BottomNavigation />
+
+
+    </AppShell>
+
+  )
+
 }
