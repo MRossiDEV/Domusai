@@ -1,9 +1,10 @@
+import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type Props = {
   eyebrow?: string;
-  title: string;
-  description?: string;
+  title: ReactNode;
+  description?: ReactNode;
   centered?: boolean;
 };
 
@@ -26,7 +27,7 @@ export default function SectionTitle({
         </p>
       )}
 
-      <h2 className="font-serif text-5xl leading-tight text-black-500 lg:text-6xl">
+      <h2 className="font-serif text-5xl leading-tight text-white lg:text-6xl">
         {title}
       </h2>
 

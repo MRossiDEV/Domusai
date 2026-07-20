@@ -11,6 +11,7 @@ import {
 import Section from "@/components/layout/Section";
 import Container from "@/components/layout/Container";
 import ServiceCard from "./ServiceCard";
+import SectionTitle from "../common/SectionTitle";
 
 const services = [
   {
@@ -69,13 +70,31 @@ export default function Services() {
 
         <div className="mb-20 max-w-3xl">
 
-          <span className="text-xs uppercase tracking-[0.35em] text-[#d7c3a0]">
+          {/* <span className="text-xs uppercase tracking-[0.35em] text-[#d7c3a0]">
             SERVICIOS
-          </span>
-
-          <h2 className="mt-6 font-serif text-5xl leading-tight lg:text-6xl">
-            Mucho más que una búsqueda inmobiliaria.
-          </h2>
+          </span> */}
+          <SectionTitle
+            centered
+            eyebrow="QUE OFRECEMOS"
+            title={
+              <>
+                <span className="text-[#d7c3a0]">Una experiencia diseñada para </span>
+                <span className="text-gray-500">ahorrar tiempo</span>
+                <span className="text-[#d7c3a0]"> y encontrar </span>
+                <span className="text-gray-500">mejores oportunidades</span>.
+              </>
+            }
+            description={
+              <>
+                <span className="font-semibold text-gray-500">DOMUSAI</span> transforma una
+                búsqueda inmobiliaria compleja en una experiencia
+                <span className="text-[#d7c3a0]">personalizada que 
+                combina inteligencia artificial con </span>asesoramiento humano experto
+            para ofrecer una experiencia privada, exclusiva y completamente
+            personalizada.
+              </>
+            }
+          />
 
           <p className="mt-8 text-lg leading-8 text-white/70">
             Domusai combina inteligencia artificial con asesoramiento humano experto

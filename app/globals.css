@@ -128,3 +128,7 @@
     @apply font-sans;
   }
 }
+
+.text-gold {
+  color: #d7c3a0;
+}

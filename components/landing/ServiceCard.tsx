@@ -21,8 +21,9 @@ export default function ServiceCard({
       id={`service-card-${id}`}
       className="
         group
-        relative
-        h-full
+        relative        
+        min-w-[270px]
+        min-h-[270px]
         overflow-hidden
         rounded-md
         border
@@ -108,7 +109,7 @@ export default function ServiceCard({
             pt-6
           "
         >
-          <span className="text-xs uppercase tracking-[0.3em] text-[#d7c3a0]">
+          <span className="text-xs pl-4 uppercase tracking-[0.3em] text-[#d7c3a0]">
             Experiencia Premium
           </span>
 
