@@ -37,17 +37,17 @@ export type QuestionCategory =
 
 export interface WizardOption {
 
-  value: string
+  value:string
 
-  label: string
+  label:string
 
-  description?: string
+  description?:string
 
-  icon?: string
+  icon?:string
 
-  score?: number
+  score?:number
 
-  tags?: string[]
+  tags?:string[]
 
 }
 
@@ -55,17 +55,17 @@ export interface WizardOption {
 
 export interface ValidationRules {
 
-  required?: boolean
+  required?:boolean
 
-  minLength?: number
+  minLength?:number
 
-  maxLength?: number
+  maxLength?:number
 
-  min?: number
+  min?:number
 
-  max?: number
+  max?:number
 
-  pattern?: string
+  pattern?:string
 
 }
 
@@ -73,7 +73,7 @@ export interface ValidationRules {
 
 export interface ConditionalRule {
 
-  questionId: string
+  questionId:string
 
   operator:
     | "equals"
@@ -93,96 +93,138 @@ export interface ConditionalRule {
 
 export interface BaseStep {
 
-  id: string
+  id:string
 
-  type: FlowStepType
+  type:FlowStepType
 
-  title?: string
+  title?:string
 
-  subtitle?: string
+  subtitle?:string
 
-  description?: string
-
-}
-
-
-
-export interface IntroStep
-extends BaseStep {
-
-  type: "intro"
-
-  video?: string
-
-  poster?: string
-
-  cta?: string
+  description?:string
 
 }
 
 
 
-export interface QuestionStep
-extends BaseStep {
+export interface IntroStep extends BaseStep {
 
-  type: "question"
+  type:"intro"
 
-  category?: QuestionCategory
+  video?:string
 
-  questionType: QuestionType
+  poster?:string
 
-  placeholder?: string
-
-  options?: WizardOption[]
-
-  validation?: ValidationRules
-
-  condition?: ConditionalRule
-
-  required?: boolean
+  cta?:string
 
 }
 
 
 
-export interface SummaryStep
-extends BaseStep {
+export interface QuestionUI {
 
-  type: "summary"
+  layout?:
+    | "cards"
+    | "list"
+    | "grid"
+    | "input"
 
-}
+  image?:string
 
+  animation?:
+    | "fade"
+    | "slide"
+    | "scale"
 
-
-export interface ContactStep
-extends BaseStep {
-
-  type: "contact"
-
-}
-
-
-
-export interface ProcessingStep
-extends BaseStep {
-
-  type: "processing"
+  allowSkip?:boolean
 
 }
 
 
 
-export interface CompletionStep
-extends BaseStep {
+export interface QuestionStep extends BaseStep {
 
-  type: "completion"
+  type:"question"
+
+  category:QuestionCategory
+
+  questionType:QuestionType
+
+  placeholder?:string
+
+  options?:WizardOption[]
+
+  validation?:ValidationRules
+
+  condition?:ConditionalRule
+
+  required?:boolean
+
+
+  ui?:QuestionUI
+
+
+  aiContext?:{
+
+    importance:
+      | "low"
+      | "medium"
+      | "high"
+
+    purpose:
+      | "qualification"
+      | "recommendation"
+      | "segmentation"
+      | "personalization"
+
+    tags?:string[]
+
+  }
+
+
+  analytics?:{
+
+    eventName?:string
+
+  }
+
+}
+
+
+
+export interface SummaryStep extends BaseStep {
+
+  type:"summary"
+
+}
+
+
+
+export interface ContactStep extends BaseStep {
+
+  type:"contact"
+
+}
+
+
+
+export interface ProcessingStep extends BaseStep {
+
+  type:"processing"
+
+}
+
+
+
+export interface CompletionStep extends BaseStep {
+
+  type:"completion"
 
 }
 
 
 
 export type FlowStep =
-
   | IntroStep
   | QuestionStep
   | SummaryStep
@@ -196,14 +238,14 @@ export type FlowStep =
 
 export interface WizardAnswer {
 
-  questionId: string
+  questionId:string
 
   value:
     | string
     | string[]
     | number
 
-  timestamp?: number
+  timestamp?:number
 
 }
 
@@ -213,18 +255,18 @@ export interface WizardAnswer {
 
 export interface ContactInformation {
 
-  fullName?: string
+  fullName:string
 
-  email?: string
+  email:string
 
-  phone?: string
+  phone:string
 
-  contactMethod?:
+  contactMethod:
     | "WhatsApp"
     | "Email"
     | "Llamada"
 
-  message?: string
+  message?:string
 
 }
 
@@ -235,17 +277,13 @@ export interface ContactInformation {
 export interface WizardSubmission {
 
   assessment:
-    Record<
-      string,
-      WizardAnswer
-    >
+    Record<string,WizardAnswer>
 
-  contact:
-    ContactInformation
+  contact:ContactInformation
 
-  startedAt?: number
+  startedAt?:number
 
-  completedAt?: number
+  completedAt?:number
 
 }
 
@@ -255,19 +293,16 @@ export interface WizardSubmission {
 
 export interface WizardState {
 
-  currentStep: number
+  currentStep:number
 
   answers:
-    Record<
-      string,
-      WizardAnswer
-    >
+    Record<string,WizardAnswer>
 
-  startedAt?: number
+  startedAt?:number
 
-  completedAt?: number
+  completedAt?:number
 
-  contact?: ContactInformation
+  contact?:ContactInformation
 
 }
 
@@ -277,27 +312,27 @@ export interface WizardState {
 
 export interface WizardConfig {
 
-  id: string
+  id:string
 
-  title: string
+  title:string
 
-  description?: string
+  description?:string
 
-  steps: FlowStep[]
+  steps:FlowStep[]
 
-  settings?: {
+  settings?:{
 
-    showProgress?: boolean
+    showProgress?:boolean
 
-    allowBack?: boolean
+    allowBack?:boolean
 
-    saveProgress?: boolean
+    saveProgress?:boolean
 
-    autoSave?: boolean
+    autoSave?:boolean
 
-    showStepCounter?: boolean
+    showStepCounter?:boolean
 
-    mobileAppMode?: boolean
+    mobileAppMode?:boolean
 
   }
 
