@@ -55,14 +55,21 @@ interface UseWizardReturn {
 }
 
 
+
 export function useWizard(
+
   config: WizardConfig
+
 ): UseWizardReturn {
 
 
+
   const [
+
     state,
+
     setState
+
   ] = useState<WizardState>({
 
     currentStep: 0,
@@ -75,17 +82,36 @@ export function useWizard(
 
 
 
+
+
+
+
   const steps = useMemo(() => {
 
 
     return config.steps.filter(step => {
 
 
-      if (!step.condition) {
+      if (
+        step.type !== "question"
+      ) {
 
         return true
 
       }
+
+
+
+
+      if (
+        !step.condition
+      ) {
+
+        return true
+
+      }
+
+
 
 
 
@@ -97,6 +123,8 @@ export function useWizard(
 
 
 
+
+
       if (!dependency) {
 
         return false
@@ -105,8 +133,11 @@ export function useWizard(
 
 
 
-      const answer =
-        dependency.value
+
+
+      const answer = dependency.value
+
+
 
 
 
@@ -118,17 +149,23 @@ export function useWizard(
         case "equals":
 
           return (
+
             answer ===
             step.condition.value
+
           )
+
 
 
         case "not_equals":
 
           return (
+
             answer !==
             step.condition.value
+
           )
+
 
 
         case "contains":
@@ -146,20 +183,27 @@ export function useWizard(
               )
 
 
+
         case "greater_than":
 
           return (
+
             Number(answer) >
             Number(step.condition.value)
+
           )
+
 
 
         case "less_than":
 
           return (
+
             Number(answer) <
             Number(step.condition.value)
+
           )
+
 
 
         default:
@@ -183,11 +227,17 @@ export function useWizard(
 
 
 
+
+
+
   const currentStepData =
 
     steps[
       state.currentStep
     ]
+
+
+
 
 
 
@@ -203,9 +253,17 @@ export function useWizard(
 
 
 
+
+
+
+
   const totalSteps =
 
     steps.length
+
+
+
+
 
 
 
@@ -214,10 +272,15 @@ export function useWizard(
 
     steps.filter(
 
-      step =>
+      (step): step is QuestionStep =>
+
         step.type === "question"
 
     )
+
+
+
+
 
 
 
@@ -227,11 +290,19 @@ export function useWizard(
     currentQuestion
 
       ? questionSteps.findIndex(
+
           question =>
+
             question.id === currentQuestion.id
+
         )
 
       : -1
+
+
+
+
+
 
 
 
@@ -245,12 +316,22 @@ export function useWizard(
       :
 
         (
+
           (currentQuestionIndex + 1)
+
           /
+
           questionSteps.length
+
         )
+
         *
+
         100
+
+
+
+
 
 
 
@@ -262,10 +343,19 @@ export function useWizard(
 
 
 
+
+
+
+
   const isLastStep =
 
     state.currentStep ===
+
     steps.length - 1
+
+
+
+
 
 
 
@@ -277,12 +367,19 @@ export function useWizard(
       ?
 
         state.answers[
+
           currentQuestion.id
+
         ]
 
       :
 
         undefined
+
+
+
+
+
 
 
 
@@ -298,11 +395,15 @@ export function useWizard(
 
 
 
+
+
     if (!currentQuestion.required) {
 
       return true
 
     }
+
+
 
 
 
@@ -314,6 +415,8 @@ export function useWizard(
 
 
 
+
+
     if (
       Array.isArray(
         currentAnswer.value
@@ -321,10 +424,14 @@ export function useWizard(
     ) {
 
       return (
+
         currentAnswer.value.length > 0
+
       )
 
     }
+
+
 
 
 
@@ -339,6 +446,7 @@ export function useWizard(
     )
 
 
+
   }, [
 
     currentQuestion,
@@ -351,15 +459,18 @@ export function useWizard(
 
 
 
+
+
+
+
+
   const setAnswer = useCallback(
 
     (
-      questionId: string,
 
-      value:
-        | string
-        | string[]
-        | number
+      questionId,
+
+      value
 
     ) => {
 
@@ -386,6 +497,7 @@ export function useWizard(
 
 
             timestamp:
+
               Date.now()
 
 
@@ -408,6 +520,11 @@ export function useWizard(
 
 
 
+
+
+
+
+
   const next = useCallback(() => {
 
 
@@ -416,6 +533,8 @@ export function useWizard(
       return
 
     }
+
+
 
 
 
@@ -439,6 +558,7 @@ export function useWizard(
     }))
 
 
+
   }, [
 
     canContinue,
@@ -446,6 +566,11 @@ export function useWizard(
     steps.length
 
   ])
+
+
+
+
+
 
 
 
@@ -474,7 +599,13 @@ export function useWizard(
     }))
 
 
+
   }, [])
+
+
+
+
+
 
 
 
@@ -485,11 +616,11 @@ export function useWizard(
 
     setState({
 
-      currentStep: 0,
+      currentStep:0,
 
-      answers: {},
+      answers:{},
 
-      startedAt: Date.now()
+      startedAt:Date.now()
 
     })
 
@@ -500,16 +631,21 @@ export function useWizard(
 
 
 
+
+
+
+
+
   const getAnswer = useCallback(
 
     (
-      questionId: string
+
+      questionId:string
+
     ) => {
 
 
-      return state.answers[
-        questionId
-      ]
+      return state.answers[questionId]
 
 
     },
@@ -526,6 +662,11 @@ export function useWizard(
 
 
 
+
+
+
+
+
   const getSummary = useCallback(() => {
 
 
@@ -537,6 +678,11 @@ export function useWizard(
     state.answers
 
   ])
+
+
+
+
+
 
 
 
