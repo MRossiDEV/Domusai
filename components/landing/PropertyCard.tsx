@@ -129,7 +129,7 @@ export default function PropertyCard({
             hover:text-[#d7c3a0]
           "
         >
-          Descubrir propiedad
+          Solicitar Acceso
 
           <ArrowRight
             size={18}

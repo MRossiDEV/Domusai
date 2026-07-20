@@ -1,112 +1,313 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata, Viewport } from "next"
+
+import { Geist, Geist_Mono } from "next/font/google"
+
+import "./globals.css"
+
+
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+
+  variable:
+    "--font-geist-sans",
+
+  subsets:
+    ["latin"],
+
+})
+
+
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+
+  variable:
+    "--font-geist-mono",
+
+  subsets:
+    ["latin"],
+
+})
+
+
+
+export const viewport: Viewport = {
+
+  themeColor:
+    "#F8F7F3",
+
+  width:
+    "device-width",
+
+  initialScale:
+    1,
+
+  maximumScale:
+    1,
+
+  viewportFit:
+    "cover",
+
+}
+
+
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://domusai.app"),
+
+  metadataBase:
+    new URL(
+      "https://domusai.app"
+    ),
+
 
   title: {
-    default: "DOMUSAI | Propiedades Exclusivas en Uruguay",
-    template: "%s | DOMUSAI",
+
+    default:
+      "DOMUSAI | Propiedades Exclusivas en Uruguay",
+
+    template:
+      "%s | DOMUSAI",
+
   },
+
 
   description:
-    "Descubrí propiedades exclusivas en Uruguay mediante una experiencia privada y personalizada. Domusai combina inteligencia inmobiliaria con asesoramiento experto para ayudarte a encontrar la propiedad ideal.",
+    "Descubrí propiedades exclusivas en Uruguay mediante una experiencia privada y personalizada. DOMUSAI combina inteligencia inmobiliaria con asesoramiento experto para ayudarte a encontrar la propiedad ideal.",
+
+
 
   keywords: [
+
     "Propiedades Uruguay",
+
     "Casas Uruguay",
+
     "Casas de lujo Uruguay",
+
     "Propiedades exclusivas",
+
     "Montevideo",
+
     "Carrasco",
+
     "Punta del Este",
+
     "José Ignacio",
+
     "Comprar casa Uruguay",
+
     "Inmobiliaria Uruguay",
+
     "DOMUSAI",
+
   ],
+
+
 
   authors: [
+
     {
-      name: "DOMUSAI",
-    },
+      name:
+        "DOMUSAI",
+    }
+
   ],
 
-  creator: "DOMUSAI",
 
-  publisher: "DOMUSAI",
 
-  applicationName: "DOMUSAI",
+  creator:
+    "DOMUSAI",
 
-  category: "Real Estate",
+
+  publisher:
+    "DOMUSAI",
+
+
+  applicationName:
+    "DOMUSAI",
+
+
+  category:
+    "Real Estate",
+
+
 
   robots: {
-    index: true,
-    follow: true,
+
+    index:
+      true,
+
+    follow:
+      true,
+
     googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
+
+      index:
+        true,
+
+      follow:
+        true,
+
+      "max-image-preview":
+        "large",
+
+      "max-snippet":
+        -1,
+
+      "max-video-preview":
+        -1,
+
     },
+
   },
+
+
+
+  appleWebApp: {
+
+    capable:
+      true,
+
+    title:
+      "DOMUSAI",
+
+    statusBarStyle:
+      "black-translucent",
+
+  },
+
+
+
+  formatDetection: {
+
+    telephone:
+      false,
+
+  },
+
+
 
   openGraph: {
-    type: "website",
-    locale: "es_UY",
-    url: "https://domusai.app",
-    siteName: "DOMUSAI",
-    title: "DOMUSAI | Propiedades Exclusivas en Uruguay",
+
+    type:
+      "website",
+
+    locale:
+      "es_UY",
+
+    url:
+      "https://domusai.app",
+
+    siteName:
+      "DOMUSAI",
+
+    title:
+      "DOMUSAI | Propiedades Exclusivas en Uruguay",
+
     description:
       "Una experiencia privada para encontrar propiedades excepcionales en Uruguay.",
+
     images: [
+
       {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "DOMUSAI - Propiedades Exclusivas en Uruguay",
+
+        url:
+          "/opengraph-image",
+
+        width:
+          1200,
+
+        height:
+          630,
+
+        alt:
+          "DOMUSAI - Propiedades Exclusivas en Uruguay",
+
       },
+
     ],
+
   },
+
+
 
   twitter: {
-    card: "summary_large_image",
-    title: "DOMUSAI | Propiedades Exclusivas en Uruguay",
+
+    card:
+      "summary_large_image",
+
+    title:
+      "DOMUSAI | Propiedades Exclusivas en Uruguay",
+
     description:
       "Una experiencia privada para encontrar propiedades excepcionales en Uruguay.",
-    images: ["/opengraph-image"],
+
+    images:
+      [
+        "/opengraph-image"
+      ],
+
   },
+
+
 
   alternates: {
-    canonical: "/",
+
+    canonical:
+      "/",
+
   },
-};
+
+
+}
+
+
 
 export default function RootLayout({
+
   children,
+
 }: Readonly<{
-  children: React.ReactNode;
+
+  children:
+    React.ReactNode
+
 }>) {
+
+
   return (
+
     <html
+
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
+
+      className={`
+        ${geistSans.variable}
+        ${geistMono.variable}
+        h-full
+        scroll-smooth
+        antialiased
+      `}
+
     >
-      <body className="min-h-screen bg-white text-neutral-950">
+
+      <body
+
+        className="
+          min-h-screen
+          overflow-x-hidden
+          bg-[#F8F7F3]
+          text-neutral-950
+        "
+
+      >
+
         {children}
+
       </body>
+
+
     </html>
-  );
+
+  )
+
 }

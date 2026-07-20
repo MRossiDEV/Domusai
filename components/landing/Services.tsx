@@ -5,106 +5,92 @@ import {
   Globe,
   User,
   Key,
-  BarChart2,
+  ShieldCheck,
 } from "lucide-react";
 
 import Section from "@/components/layout/Section";
 import Container from "@/components/layout/Container";
-import ServiceCard from "./ServiceCard";
 import SectionTitle from "../common/SectionTitle";
+import ServiceCard from "./ServiceCard";
 
 const services = [
   {
     id: 1,
-    title: "Selección Personalizada",
+    title: "Selección Inteligente",
     description:
-      "Cada propiedad es elegida según tu estilo de vida, objetivos y preferencias. Sin catálogos interminables, solo oportunidades relevantes.",
+      "Analizamos tus objetivos y preferencias para presentarte únicamente propiedades realmente alineadas con tu perfil.",
     icon: Globe,
   },
   {
     id: 2,
-    title: "Asesor Privado",
+    title: "Representación del Comprador",
     description:
-      "Un especialista te acompaña durante todo el proceso con absoluta discreción, transparencia y atención personalizada.",
+      "Trabajamos del lado del comprador, acompañándote con asesoramiento profesional durante todo el proceso de adquisición.",
     icon: User,
   },
   {
     id: 3,
-    title: "Acceso Exclusivo",
+    title: "Oportunidades Seleccionadas",
     description:
-      "Descubrí oportunidades que rara vez llegan al mercado abierto gracias a nuestra red de aliados y propiedades seleccionadas.",
+      "Accedé a una selección cuidadosamente curada de propiedades de alto valor, incluyendo oportunidades que muchas veces no llegan al mercado masivo.",
     icon: Key,
   },
   {
     id: 4,
-    title: "Compra con Confianza",
+    title: "Decisiones con Confianza",
     description:
-      "Combinamos inteligencia, experiencia y análisis para ayudarte a tomar decisiones informadas con total tranquilidad.",
-    icon: BarChart2,
+      "Combinamos análisis de mercado, experiencia inmobiliaria y tecnología para ayudarte a invertir con mayor seguridad.",
+    icon: ShieldCheck,
   },
 ];
 
 export default function Services() {
   return (
     <Section
-      id="services"
+      id="servicios"
       className="relative overflow-hidden bg-black text-white"
     >
       {/* Background */}
 
       <Image
         src="/images/luxury-desk.png"
-        alt="Luxury Background"
+        alt="Asesor inmobiliario de lujo"
         fill
-        priority
+        sizes="100vw"
         className="object-cover"
       />
 
       {/* Overlay */}
 
-      <div className="absolute inset-0 bg-black/75" />
+      <div className="absolute inset-0 bg-black/80" />
 
-      {/* Content */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black" />
 
       <Container className="relative z-10">
 
-        <div className="mb-20 max-w-3xl">
+        <SectionTitle
+          centered
+          eyebrow="NUESTRA DIFERENCIA"
+          title={
+            <>
+              Mucho más que una{" "}
+              <span className="text-[#d7c3a0]">
+                búsqueda inmobiliaria
+              </span>
+              .
+            </>
+          }
+          description={
+            <>
+              Domusai combina tecnología, análisis y experiencia humana para
+              transformar una búsqueda compleja en un proceso claro,
+              personalizado y orientado a encontrar la propiedad adecuada para
+              cada comprador.
+            </>
+          }
+        />
 
-          {/* <span className="text-xs uppercase tracking-[0.35em] text-[#d7c3a0]">
-            SERVICIOS
-          </span> */}
-          <SectionTitle
-            centered
-            eyebrow="QUE OFRECEMOS"
-            title={
-              <>
-                <span className="text-[#d7c3a0]">Una experiencia diseñada para </span>
-                <span className="text-gray-500">ahorrar tiempo</span>
-                <span className="text-[#d7c3a0]"> y encontrar </span>
-                <span className="text-gray-500">mejores oportunidades</span>.
-              </>
-            }
-            description={
-              <>
-                <span className="font-semibold text-gray-500">DOMUSAI</span> transforma una
-                búsqueda inmobiliaria compleja en una experiencia
-                <span className="text-[#d7c3a0]">personalizada que 
-                combina inteligencia artificial con </span>asesoramiento humano experto
-            para ofrecer una experiencia privada, exclusiva y completamente
-            personalizada.
-              </>
-            }
-          />
-
-          <p className="mt-8 text-lg leading-8 text-white/70">
-            Domusai combina inteligencia artificial con asesoramiento humano experto
-            para ofrecer una experiencia privada, exclusiva y completamente
-            personalizada.
-          </p>
-
-        </div>
-
-        <div className="flex flex-wrap gap-8 lg:flex-nowrap">
+        <div className="mt-20 grid gap-8 md:grid-cols-2 xl:grid-cols-4">
           {services.map((service) => {
             const Icon = service.icon;
 

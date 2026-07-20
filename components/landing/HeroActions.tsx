@@ -26,7 +26,7 @@ export default function HeroActions() {
         hover:bg-white
         "
       >
-        Iniciar Búsqueda Privada
+        Comenzar Evaluación
       </Link>
 
       <Link

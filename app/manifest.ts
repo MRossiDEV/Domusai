@@ -1,39 +1,84 @@
-import type { MetadataRoute } from "next";
+import type { MetadataRoute } from "next"
+
 
 export default function manifest(): MetadataRoute.Manifest {
+
   return {
+
     name: "DOMUSAI",
+
     short_name: "DOMUSAI",
+
     description:
-      "Propiedades exclusivas en Uruguay mediante una experiencia privada y personalizada.",
-    start_url: "/",
+      "Una experiencia personalizada para encontrar propiedades alineadas con tu estilo de vida.",
+
+
+    start_url: "/wizard",
+
+
     display: "standalone",
-    background_color: "#0a0a0a",
-    theme_color: "#0a0a0a",
-    lang: "es-UY",
-    orientation: "portrait",
-    categories: ["real-estate", "business", "lifestyle"],
-    icons: [
+
+
+    background_color:
+      "#F8F7F3",
+
+
+    theme_color:
+      "#F8F7F3",
+
+
+    lang:
+      "es-UY",
+
+
+    orientation:
+      "portrait",
+
+
+    categories: [
+      "real-estate",
+      "business",
+      "lifestyle"
+    ],
+
+
+    screenshots: [
       {
-        src: "/favicon.ico",
-        sizes: "any",
-        type: "image/x-icon",
-      },
+        src: "/screenshots/mobile-home.png",
+        sizes: "1080x1920",
+        type: "image/png"
+      }
+    ],
+
+
+    icons: [
+
       {
         src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
+        purpose:
+          "any"
       },
+
+
       {
         src: "/icon-512.png",
         sizes: "512x512",
         type: "image/png",
+        purpose:
+          "any maskable"
       },
+
+
       {
         src: "/apple-icon.png",
         sizes: "180x180",
-        type: "image/png",
-      },
-    ],
-  };
+        type: "image/png"
+      }
+
+    ]
+
+  }
+
 }
