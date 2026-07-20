@@ -27,6 +27,10 @@ interface UseWizardReturn {
 
   progress: number
 
+  currentQuestionNumber: number
+
+  totalQuestions: number
+
   answers: Record<string, WizardAnswer>
 
   isFirstStep: boolean
@@ -468,9 +472,9 @@ export function useWizard(
 
     (
 
-      questionId,
+      questionId: string,
 
-      value
+      value: string | string[] | number
 
     ) => {
 
@@ -706,6 +710,16 @@ export function useWizard(
 
 
     progress,
+
+
+    currentQuestionNumber:
+
+      currentQuestionIndex + 1,
+
+
+    totalQuestions:
+
+      questionSteps.length,
 
 
     answers:

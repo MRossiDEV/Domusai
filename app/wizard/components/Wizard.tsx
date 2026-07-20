@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  useEffect,
   useState
 } from "react"
 
@@ -61,9 +62,9 @@ export default function Wizard({
 
     currentQuestion,
 
-    currentStep,
+    currentQuestionNumber,
 
-    totalSteps,
+    totalQuestions,
 
     answers,
 
@@ -84,6 +85,31 @@ export default function Wizard({
   } = useWizard(config)
 
 
+
+
+  useEffect(() => {
+
+    if (
+      currentStepData?.type !== "processing"
+    ) {
+
+      return
+    }
+
+
+    const timer = setTimeout(
+      next,
+      1800
+    )
+
+
+    return () =>
+      clearTimeout(timer)
+
+  }, [
+    currentStepData,
+    next
+  ])
 
 
 
@@ -530,11 +556,11 @@ export default function Wizard({
                   <Progress
 
                     current={
-                      currentStep + 1
+                      currentQuestionNumber
                     }
 
                     total={
-                      totalSteps
+                      totalQuestions
                     }
 
                     showCounter

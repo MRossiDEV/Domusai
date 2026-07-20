@@ -306,6 +306,11 @@ export const buyerAssessment: WizardConfig = {
         },
 
         {
+          value:"3m",
+          label:"USD 1.000.000 - 3.000.000"
+        },
+
+        {
           value:"3m_plus",
           label:"Más de USD 3.000.000"
         }
