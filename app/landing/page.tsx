@@ -51,7 +51,11 @@ export default function LandingPage() {
           {t("landing.welcomeTo")}
         </h2>
 
-        <Logo height={48} className="mb-6 mt-2" />
+        <Logo height={48} className="mt-2" />
+
+        <p className="text-xl font-semibold text-[var(--weeggo-orange)] tracking-[0.2em] mb-8">
+          HOME
+        </p>
 
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
