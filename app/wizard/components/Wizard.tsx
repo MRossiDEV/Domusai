@@ -16,6 +16,7 @@ import UserMessage from "./UserMessage"
 import AnswerComposer from "./AnswerComposer"
 import AssistantAvatar from "./AssistantAvatar"
 import TypingIndicator from "./TypingIndicator"
+import { IntroWaveBackground } from "./IntroWaveBackground"
 
 import {
   useWizard
@@ -399,35 +400,17 @@ export default function Wizard({
 
         {!showSplash && (
           <div className="relative h-full w-full overflow-hidden">
-            {currentStepData.video ? (
-              <>
-                <video
-                  src={currentStepData.video}
-                  poster={currentStepData.poster}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/60" />
-              </>
-            ) : (
-              <div
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(160deg, var(--weeggo-blue), var(--weeggo-blue-dark))" }}
-              />
-            )}
+            <IntroWaveBackground />
 
             <div className="relative z-10 flex h-full flex-col items-center justify-end px-6 pb-12 text-center">
               <AssistantAvatar size={72} />
 
-              <h1 className="mt-4 max-w-lg text-xl font-light leading-tight tracking-[-0.04em] text-white">
+              <h1 className="mt-4 max-w-lg text-xl font-light leading-tight tracking-[-0.04em] text-foreground">
                 {currentStepData.title}
               </h1>
 
               {currentStepData.description && (
-                <p className="mt-5 max-w-md text-base leading-relaxed text-white/70">
+                <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
                   {currentStepData.description}
                 </p>
               )}
@@ -441,7 +424,7 @@ export default function Wizard({
                 }}
                 placeholder="¿Cómo te llamas?"
                 autoFocus
-                className="mt-6 w-full max-w-md rounded-full border border-white/25 bg-white/10 px-6 py-4 text-center text-base text-white outline-none backdrop-blur-sm transition placeholder:text-white/50 focus:border-white/60"
+                className="mt-6 w-full max-w-md rounded-full border border-border bg-card px-6 py-4 text-center text-base text-foreground outline-none transition placeholder:text-muted-foreground focus:border-[var(--weeggo-orange)]"
               />
 
               <button
@@ -456,7 +439,7 @@ export default function Wizard({
               <button
                 type="button"
                 onClick={handleSkipAssistant}
-                className="mt-4 text-xs font-semibold text-white/60 underline underline-offset-2"
+                className="mt-4 text-xs font-semibold text-muted-foreground underline underline-offset-2"
               >
                 Saltar al asistente
               </button>

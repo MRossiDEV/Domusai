@@ -12,7 +12,7 @@ interface ChatHeaderProps {
 
 export default function ChatHeader({ showBack, onBack, onClose }: ChatHeaderProps) {
   return (
-    <div className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3.5 safe-top">
+    <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-card safe-top">
       {showBack ? (
         <button
           type="button"

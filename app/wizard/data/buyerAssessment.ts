@@ -57,12 +57,6 @@ export const buyerAssessment: WizardConfig = {
       description:
         "Por favor responde unas preguntas rápidas para entender qué estás buscando y preparar una selección a tu medida.",
 
-      video:
-        "/videos/avatar-intro.mp4",
-
-      poster:
-        "/images/avatar-poster.jpg",
-
       cta:
         "Comenzar"
 

@@ -384,6 +384,46 @@ button {
   }
 }
 
+/* Slow-drifting wave ribbons — the wizard welcome screen's background.
+   Same "pure CSS transform loop" approach as the blob field above. */
+.weeggo-wave-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.weeggo-wave {
+  position: absolute;
+  will-change: transform;
+}
+
+@keyframes weeggo-wave-drift-a {
+  0%, 100% { transform: translate(-3%, 0%) scale(1.02); }
+  50% { transform: translate(3%, -2%) scale(1.06); }
+}
+
+@keyframes weeggo-wave-drift-b {
+  0%, 100% { transform: translate(2%, 1%) scale(1.04); }
+  50% { transform: translate(-3%, -1%) scale(1); }
+}
+
+.weeggo-wave-a { animation: weeggo-wave-drift-a 26s ease-in-out infinite; }
+.weeggo-wave-b { animation: weeggo-wave-drift-b 33s ease-in-out infinite; animation-delay: -9s; }
+
+/* Halftone dot texture, corner accents — echoes the reference design's dot grid. */
+.weeggo-halftone {
+  position: absolute;
+  background-image: radial-gradient(circle, currentColor 1.4px, transparent 1.4px);
+  background-size: 14px 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weeggo-wave-a, .weeggo-wave-b {
+    animation: none;
+  }
+}
+
 
 
 

@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useMemo,
   useState
 } from "react"
@@ -13,6 +14,15 @@ import type {
   WizardConfig,
   WizardState
 } from "../types"
+
+interface PersistedWizardProgress {
+  currentStep: number
+  answers: Record<string, WizardAnswer>
+}
+
+function wizardStorageKey(configId: string): string {
+  return `weeggo.wizard.${configId}.v1`
+}
 
 
 interface UseWizardReturn {
@@ -93,6 +103,48 @@ export function useWizard(
     startedAt: Date.now()
 
   }))
+
+  // Resumes an in-progress session (localStorage, per config.id) if the
+  // config opts into it via settings.saveProgress — a refresh or a
+  // backgrounded tab mid-conversation shouldn't throw away everything
+  // already answered. Hydration only ever runs once, right after mount
+  // (client-only — localStorage doesn't exist during SSR).
+  //
+  // This is state, not a ref: the persist effect below needs to wait until
+  // a render has actually committed with the restored answers before it's
+  // safe to write — otherwise, within the same effect-flush as hydration,
+  // it would read the stale pre-hydration state (a ref updates
+  // synchronously, but `state` in the persist effect's closure wouldn't be
+  // fresh yet) and immediately overwrite the just-restored progress.
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    if (!config.settings?.saveProgress) {
+      setHydrated(true)
+      return
+    }
+
+    try {
+      const raw = window.localStorage.getItem(wizardStorageKey(config.id))
+      const parsed = raw ? (JSON.parse(raw) as Partial<PersistedWizardProgress> | null) : null
+
+      if (parsed && typeof parsed.currentStep === "number" && typeof parsed.answers === "object") {
+        setState(previous => ({
+          ...previous,
+          currentStep: parsed.currentStep as number,
+          // Freshly-supplied initialAnswers (e.g. a visitorName already
+          // known this session) win over whatever was previously stored for
+          // the same question, since they're more current.
+          answers: { ...parsed.answers, ...previous.answers }
+        }))
+      }
+    } catch {
+      // Corrupt or unavailable storage — fall through and start fresh.
+    }
+
+    setHydrated(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs exactly once, right after mount
+  }, [])
 
 
 
@@ -250,7 +302,28 @@ export function useWizard(
       state.currentStep
     ]
 
+  // Persists progress on every change, once past the initial hydration
+  // check above (otherwise this would immediately overwrite a just-restored
+  // session with the pre-hydration blank state). Reaching "completion"
+  // clears it instead — a finished conversation has nothing left to resume.
+  useEffect(() => {
+    if (!hydrated) return
+    if (!config.settings?.saveProgress) return
 
+    try {
+      if (currentStepData?.type === "completion") {
+        window.localStorage.removeItem(wizardStorageKey(config.id))
+      } else {
+        const progress: PersistedWizardProgress = {
+          currentStep: state.currentStep,
+          answers: state.answers
+        }
+        window.localStorage.setItem(wizardStorageKey(config.id), JSON.stringify(progress))
+      }
+    } catch {
+      // Storage unavailable/full — progress just won't survive a refresh.
+    }
+  }, [hydrated, config.id, config.settings?.saveProgress, currentStepData?.type, state.currentStep, state.answers])
 
 
 
@@ -638,8 +711,14 @@ export function useWizard(
 
     })
 
+    try {
+      window.localStorage.removeItem(wizardStorageKey(config.id))
+    } catch {
+      // Storage unavailable — nothing to clean up.
+    }
 
-  }, [])
+
+  }, [config.id])
 
 
 
