@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = "https://domusai.app";
+const baseUrl = "https://weeggo.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next"
 
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, IBM_Plex_Mono } from "next/font/google"
+import localFont from "next/font/local"
 
 import "./globals.css"
 
 import ServiceWorkerRegister from "@/components/pwa/ServiceWorkerRegister"
+import { ThemedToaster } from "@/components/ThemedToaster"
+import { DiscoverProvider } from "@/lib/discover/filters-context"
 
 
 
@@ -27,6 +30,36 @@ const geistMono = Geist_Mono({
 
   subsets:
     ["latin"],
+
+})
+
+
+
+const ibmPlexMono = IBM_Plex_Mono({
+
+  variable:
+    "--font-weeggo-mono",
+
+  subsets:
+    ["latin"],
+
+  weight:
+    ["400", "500", "600"],
+
+})
+
+
+
+const weeggoLogoFont = localFont({
+
+  src:
+    "../public/fonts/VanillaExtractRegular.ttf",
+
+  variable:
+    "--font-weeggo-logo",
+
+  display:
+    "swap",
 
 })
 
@@ -60,23 +93,23 @@ export const metadata: Metadata = {
 
   metadataBase:
     new URL(
-      "https://domusai.app"
+      "https://weeggo.app"
     ),
 
 
   title: {
 
     default:
-      "DOMUSAI | Propiedades Exclusivas en Uruguay",
+      "WEEGGO | Find your next place in Uruguay",
 
     template:
-      "%s | DOMUSAI",
+      "%s | WEEGGO",
 
   },
 
 
   description:
-    "Descubrí propiedades exclusivas en Uruguay mediante una experiencia privada y personalizada. DOMUSAI combina inteligencia inmobiliaria con asesoramiento experto para ayudarte a encontrar la propiedad ideal.",
+    "Swipe through exclusive properties in Uruguay. WEEGGO matches buyers, renters, and investors with places that fit — fast, personal, and private.",
 
 
 
@@ -102,7 +135,7 @@ export const metadata: Metadata = {
 
     "Inmobiliaria Uruguay",
 
-    "DOMUSAI",
+    "WEEGGO",
 
   ],
 
@@ -112,7 +145,7 @@ export const metadata: Metadata = {
 
     {
       name:
-        "DOMUSAI",
+        "WEEGGO",
     }
 
   ],
@@ -120,15 +153,15 @@ export const metadata: Metadata = {
 
 
   creator:
-    "DOMUSAI",
+    "WEEGGO",
 
 
   publisher:
-    "DOMUSAI",
+    "WEEGGO",
 
 
   applicationName:
-    "DOMUSAI",
+    "WEEGGO",
 
 
   category:
@@ -173,10 +206,10 @@ export const metadata: Metadata = {
       true,
 
     title:
-      "DOMUSAI",
+      "WEEGGO",
 
     statusBarStyle:
-      "black-translucent",
+      "default",
 
   },
 
@@ -241,16 +274,16 @@ export const metadata: Metadata = {
       "es_UY",
 
     url:
-      "https://domusai.app",
+      "https://weeggo.app",
 
     siteName:
-      "DOMUSAI",
+      "WEEGGO",
 
     title:
-      "DOMUSAI | Propiedades Exclusivas en Uruguay",
+      "WEEGGO | Find your next place in Uruguay",
 
     description:
-      "Una experiencia privada para encontrar propiedades excepcionales en Uruguay.",
+      "Swipe through exclusive properties in Uruguay — buy, rent, or invest.",
 
     images: [
 
@@ -266,7 +299,7 @@ export const metadata: Metadata = {
           630,
 
         alt:
-          "DOMUSAI - Propiedades Exclusivas en Uruguay",
+          "WEEGGO - Find your next place",
 
       },
 
@@ -282,10 +315,10 @@ export const metadata: Metadata = {
       "summary_large_image",
 
     title:
-      "DOMUSAI | Propiedades Exclusivas en Uruguay",
+      "WEEGGO | Find your next place in Uruguay",
 
     description:
-      "Una experiencia privada para encontrar propiedades excepcionales en Uruguay.",
+      "Swipe through exclusive properties in Uruguay — buy, rent, or invest.",
 
     images:
       [
@@ -329,6 +362,8 @@ export default function RootLayout({
       className={`
         ${geistSans.variable}
         ${geistMono.variable}
+        ${ibmPlexMono.variable}
+        ${weeggoLogoFont.variable}
         h-full
         scroll-smooth
         antialiased
@@ -337,6 +372,8 @@ export default function RootLayout({
     >
 
       <body
+
+        suppressHydrationWarning
 
         className="
           min-h-screen
@@ -347,9 +384,11 @@ export default function RootLayout({
 
       >
 
-        {children}
+        <DiscoverProvider>{children}</DiscoverProvider>
 
         <ServiceWorkerRegister />
+
+        <ThemedToaster />
 
       </body>
 

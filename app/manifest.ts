@@ -5,12 +5,12 @@ export default function manifest(): MetadataRoute.Manifest {
 
   return {
 
-    name: "DOMUSAI",
+    name: "WEEGGO",
 
-    short_name: "DOMUSAI",
+    short_name: "WEEGGO",
 
     description:
-      "Una experiencia personalizada para encontrar propiedades alineadas con tu estilo de vida.",
+      "Swipe through exclusive properties in Uruguay — buy, rent, or invest.",
 
 
     id: "/",
@@ -26,11 +26,11 @@ export default function manifest(): MetadataRoute.Manifest {
 
 
     background_color:
-      "#111111",
+      "#F7F7F8",
 
 
     theme_color:
-      "#111111",
+      "#4F46E5",
 
 
     lang:

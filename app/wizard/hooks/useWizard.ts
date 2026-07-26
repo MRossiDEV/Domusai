@@ -21,6 +21,9 @@ interface UseWizardReturn {
 
   currentQuestion: QuestionStep | undefined
 
+  /** All question steps that pass their condition given the current answers, in order — lets a caller render transcript history for everything up through currentQuestionNumber - 1. */
+  questionSteps: QuestionStep[]
+
   currentStep: number
 
   totalSteps: number
@@ -62,7 +65,9 @@ interface UseWizardReturn {
 
 export function useWizard(
 
-  config: WizardConfig
+  config: WizardConfig,
+
+  initialAnswers?: Record<string, string | string[] | number>
 
 ): UseWizardReturn {
 
@@ -74,15 +79,20 @@ export function useWizard(
 
     setState
 
-  ] = useState<WizardState>({
+  ] = useState<WizardState>(() => ({
 
     currentStep: 0,
 
-    answers: {},
+    answers: Object.fromEntries(
+      Object.entries(initialAnswers ?? {}).map(([questionId, value]) => [
+        questionId,
+        { questionId, value, timestamp: Date.now() }
+      ])
+    ),
 
     startedAt: Date.now()
 
-  })
+  }))
 
 
 
@@ -699,6 +709,9 @@ export function useWizard(
 
 
     currentQuestion,
+
+
+    questionSteps,
 
 
     currentStep:

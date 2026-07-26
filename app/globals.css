@@ -10,8 +10,36 @@
 @theme inline {
 
   --color-background: var(--background);
-
   --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
   --font-sans: var(--font-sans);
 
@@ -89,6 +117,25 @@
 
   --radius:
     1.25rem;
+
+
+  --sidebar:
+    #161616;
+
+  --sidebar-foreground:
+    #F5F1E8;
+
+  --sidebar-accent:
+    #202020;
+
+  --sidebar-accent-foreground:
+    #F5F1E8;
+
+  --sidebar-border:
+    rgba(255, 255, 255, 0.08);
+
+  --sidebar-ring:
+    #C8AD7F;
 
 }
 
@@ -220,23 +267,124 @@ button {
 
 
 
-/* DOMUSAI */
+/* WEEGGO — light theme scope for the public swipe-deck app.
+   Root :root above stays the dark DOMUSAI palette for /admin and /agent;
+   this class overrides the same shadcn token names so every components/ui/*
+   primitive re-themes for free inside app/(app)/**, same mechanism as the
+   .dark custom-variant above. */
+.theme-weeggo {
 
-.text-gold {
+  --background: #F7F7F8;
+  --foreground: #18181B;
 
-  color:
-    #C8AD7F;
+  --card: #FFFFFF;
+  --card-foreground: #18181B;
 
+  --popover: #FFFFFF;
+  --popover-foreground: #18181B;
+
+  --primary: #4F46E5;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F1F1F3;
+  --secondary-foreground: #18181B;
+
+  --muted: #F1F1F3;
+  --muted-foreground: #71717A;
+
+  --accent: #ff6900;
+  --accent-foreground: #FFFFFF;
+
+  --border: #E4E4E7;
+  --input: #E4E4E7;
+  --ring: #4F46E5;
+
+  --radius: 1rem;
+
+  /* Brand-specific tokens outside the shadcn set */
+  --weeggo-blue: #4F46E5;
+  --weeggo-blue-dark: #4338CA;
+  --weeggo-blue-tint: #EEF2FF;
+  --weeggo-orange: #ff6900;
+  --weeggo-orange-2: #FB923C;
+  --weeggo-red: #f70000;
+  --weeggo-orange-tint: #FFF1EB;
+  --weeggo-green: #10B981;
+  --weeggo-green-tint: #ECFDF5;
+  --weeggo-ink: #18181B;
+  --weeggo-mute: #71717A;
+  --weeggo-line: #E4E4E7;
+  --weeggo-paper-dim: #F1F1F3;
+  --weeggo-logo-gray: #A1A1AA;
+  --weeggo-radius-lg: 22px;
+  --weeggo-radius-md: 14px;
+  --weeggo-radius-sm: 10px;
+
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.011em;
 }
 
+.font-weeggo-mono {
+  font-family: var(--font-weeggo-mono), "SF Mono", monospace;
+}
 
+.font-weeggo-logo {
+  font-family: var(--font-weeggo-logo), sans-serif;
+}
 
-.bg-domus {
-
+.weeggo-bg {
   background:
-    #111111;
-
+    radial-gradient(circle at 12% -10%, #EEF2FF 0%, transparent 42%),
+    radial-gradient(circle at 100% 8%, #FFF1EB 0%, transparent 38%),
+    radial-gradient(circle at 50% 105%, #ECFDF5 0%, transparent 42%),
+    #FAFAFA;
 }
+
+/* Slow-drifting gradient blobs — ambient motion for the landing screen.
+   Pure CSS (not framer-motion) so the loop runs off React's render cycle;
+   transform/opacity only, so it stays GPU-cheap on mobile. */
+.weeggo-blob-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.weeggo-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  will-change: transform;
+}
+
+@keyframes weeggo-blob-drift-a {
+  0%, 100% { transform: translate(-8%, -6%) scale(1); }
+  50% { transform: translate(10%, 8%) scale(1.18); }
+}
+
+@keyframes weeggo-blob-drift-b {
+  0%, 100% { transform: translate(6%, 10%) scale(1); }
+  50% { transform: translate(-10%, -6%) scale(1.12); }
+}
+
+@keyframes weeggo-blob-drift-c {
+  0%, 100% { transform: translate(0%, 0%) scale(1); }
+  50% { transform: translate(-8%, 10%) scale(1.22); }
+}
+
+.weeggo-blob-a { animation: weeggo-blob-drift-a 22s ease-in-out infinite; }
+.weeggo-blob-b { animation: weeggo-blob-drift-b 27s ease-in-out infinite; animation-delay: -7s; }
+.weeggo-blob-c { animation: weeggo-blob-drift-c 31s ease-in-out infinite; animation-delay: -14s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .weeggo-blob-a, .weeggo-blob-b, .weeggo-blob-c {
+    animation: none;
+  }
+}
+
+
 
 
 

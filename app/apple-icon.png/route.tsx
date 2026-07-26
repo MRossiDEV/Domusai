@@ -14,20 +14,20 @@ export async function GET() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#111111",
+          background: "#4F46E5",
         }}
       >
 
         <span
           style={{
-            fontSize: 92,
-            fontWeight: 300,
+            fontSize: 100,
+            fontWeight: 800,
             letterSpacing: -2,
-            color: "#C8AD7F",
-            fontFamily: "serif",
+            color: "#FFFFFF",
+            fontFamily: "sans-serif",
           }}
         >
-          D
+          W
         </span>
 
       </div>

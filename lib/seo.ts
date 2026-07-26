@@ -1,31 +1,31 @@
 import { Metadata } from "next";
 
 export const siteConfig = {
-  name: "Domusai",
-    shortName: "Domusai",
-  
+  name: "WEEGGO",
+  shortName: "WEEGGO",
+
   title:
-    "Luxury Real Estate Concierge in Uruguay | Domusai",
+    "WEEGGO | Find your next place in Uruguay",
   description:
-    "Discover exceptional properties in Uruguay through a private AI-powered real estate concierge. Personalized property selection, expert guidance and exclusive opportunities for local and international buyers.",
+    "Swipe through exclusive properties in Uruguay. WEEGGO matches buyers, renters, and investors with places that fit — fast, personal, and private.",
 
-  url: "https://domusai.app",
+  url: "https://weeggo.app",
 
-  ogImage: "/og-image.jpg",
+  ogImage: "/opengraph-image",
 
   locale: "en_US",
 
   keywords: [
-    "Luxury Real Estate Uruguay",
+    "Real Estate Uruguay",
     "Buy Property Uruguay",
+    "Rent Property Uruguay",
     "International Buyers Uruguay",
     "Relocation Uruguay",
-    "Luxury Homes Punta del Este",
-    "Luxury Homes Carrasco",
+    "Homes Punta del Este",
+    "Homes Carrasco",
     "Uruguay Investment",
-    "Real Estate Concierge",
-    "Private Property Advisor",
-    "Domusai",
+    "Real Estate App",
+    "WEEGGO",
   ],
 };
 

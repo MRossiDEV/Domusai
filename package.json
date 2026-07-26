@@ -1,5 +1,5 @@
 {
-  "name": "domusai",
+  "name": "weeggo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,8 @@
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@shadcn/react": "^0.2.1",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.109.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -26,6 +28,7 @@
     "react-dom": "19.2.4",
     "react-resizable-panels": "^4.12.2",
     "recharts": "^3.8.0",
+    "server-only": "^0.0.1",
     "shadcn": "^4.13.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",

@@ -14,21 +14,35 @@ export async function GET() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#111111",
+          background: "#4F46E5",
+          borderRadius: 108,
+          position: "relative",
         }}
       >
 
         <span
           style={{
-            fontSize: 260,
-            fontWeight: 300,
+            fontSize: 288,
+            fontWeight: 800,
             letterSpacing: -4,
-            color: "#C8AD7F",
-            fontFamily: "serif",
+            color: "#FFFFFF",
+            fontFamily: "sans-serif",
           }}
         >
-          D
+          W
         </span>
+
+        <div
+          style={{
+            position: "absolute",
+            width: 54,
+            height: 54,
+            borderRadius: "50%",
+            background: "#F0653C",
+            right: 108,
+            bottom: 108,
+          }}
+        />
 
       </div>
     ),

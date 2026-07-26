@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://domusai.app";
+  const baseUrl = "https://weeggo.app";
 
   return {
     rules: [

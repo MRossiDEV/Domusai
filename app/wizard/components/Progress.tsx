@@ -9,6 +9,8 @@ interface ProgressProps {
 
   showCounter?: boolean
 
+  label?: string
+
 }
 
 
@@ -19,7 +21,9 @@ export default function Progress({
 
   total,
 
-  showCounter = false
+  showCounter = false,
+
+  label = "Tu búsqueda"
 
 }: ProgressProps) {
 
@@ -55,7 +59,7 @@ export default function Progress({
           w-full
           overflow-hidden
           rounded-full
-          bg-white/[0.08]
+          bg-border
         "
 
       >
@@ -66,7 +70,7 @@ export default function Progress({
           className="
             h-full
             rounded-full
-            bg-[#C8AD7F]
+            bg-primary
             transition-all
             duration-700
             ease-out
@@ -100,14 +104,14 @@ export default function Progress({
               text-[10px]
               uppercase
               tracking-[0.3em]
-              text-[#8F897D]
+              text-muted-foreground
             "
 
           >
 
             <span>
 
-              Evaluación
+              {label}
 
             </span>
 
