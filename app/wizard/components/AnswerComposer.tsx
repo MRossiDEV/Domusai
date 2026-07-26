@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Send } from "lucide-react"
 
 import type { QuestionStep } from "../types"
+import { useTranslation } from "@/lib/i18n/useTranslation"
 
 interface AnswerComposerProps {
   question: QuestionStep
@@ -22,6 +23,7 @@ interface AnswerComposerProps {
  * question instead of carrying over.
  */
 export default function AnswerComposer({ question, value, onSubmit }: AnswerComposerProps) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState("")
   const [selected, setSelected] = useState<string[]>(
     Array.isArray(value) ? value : typeof value === "string" ? [value] : []
@@ -99,7 +101,7 @@ export default function AnswerComposer({ question, value, onSubmit }: AnswerComp
             className="h-12 w-full rounded-full text-[14px] font-bold text-white transition disabled:opacity-40"
             style={{ background: "var(--weeggo-orange)" }}
           >
-            Continuar
+            {t("common.continue")}
           </button>
         </div>
       </div>
@@ -118,7 +120,7 @@ export default function AnswerComposer({ question, value, onSubmit }: AnswerComp
             onKeyDown={(e) => {
               if (e.key === "Enter") submitText()
             }}
-            placeholder={question.placeholder ?? "Escribime lo que necesitás..."}
+            placeholder={question.placeholder ?? t("wizard.textInputPlaceholder")}
             autoFocus
             className="h-12 flex-1 rounded-full border border-border bg-secondary px-4 text-[14px] text-foreground outline-none transition focus:border-[var(--weeggo-orange)]"
           />
@@ -126,7 +128,7 @@ export default function AnswerComposer({ question, value, onSubmit }: AnswerComp
             type="button"
             onClick={submitText}
             disabled={!draft.trim()}
-            aria-label="Enviar"
+            aria-label={t("common.send")}
             className="flex size-11 shrink-0 items-center justify-center rounded-full text-white transition disabled:opacity-40"
             style={{ background: "var(--weeggo-orange)" }}
           >

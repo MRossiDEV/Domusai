@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useMemo,
   useRef,
   useState
 } from "react"
@@ -24,7 +25,9 @@ import {
 
 import { mapWizardAnswersToFilters } from "../lib/answers-to-filters"
 import { formatAnswerAsMessage } from "../lib/answer-to-message"
-import { useDiscover } from "@/lib/discover/filters-context"
+import { useDiscover, type Locale } from "@/lib/discover/filters-context"
+import { useTranslation, type TranslationKey } from "@/lib/i18n/useTranslation"
+import { localizeConfig } from "@/lib/i18n/wizard-content"
 
 import type {
   WizardConfig,
@@ -32,28 +35,36 @@ import type {
   WizardAnswer
 } from "../types"
 
-const PROPERTY_TYPE_PLURAL: Record<string, string> = {
-  apartment: "apartamentos",
-  house: "casas",
-  ph: "PHs",
-  loft: "lofts",
+type T = (key: TranslationKey, vars?: Record<string, string | number>) => string
+
+function propertyTypePlural(type: string, t: T): string {
+  switch (type) {
+    case "apartment": return t("wizard.apartmentsPlural")
+    case "house": return t("wizard.housesPlural")
+    case "ph": return t("wizard.phsPlural")
+    case "loft": return t("wizard.loftsPlural")
+    default: return t("wizard.propertyTypesPlural")
+  }
+}
+
+/** Joins picked neighborhoods with a locale-correct "and"/"y", e.g. "Pocitos y Cordón" or "Pocitos, Cordón y más". */
+function joinHoods(hoods: string[], t: T): string {
+  if (hoods.length === 0) return t("wizard.anywhere")
+  if (hoods.length === 1) return hoods[0]
+  if (hoods.length === 2) return `${hoods[0]} ${t("wizard.and")} ${hoods[1]}`
+  return `${hoods.slice(0, 2).join(", ")} ${t("wizard.andMore")}`
 }
 
 /** Turns the visitor's actual picks into "Juan, buscando apartamentos en Pocitos y Cordón..." instead of a generic corporate placeholder. */
-function buildProcessingMessage(answers: Record<string, WizardAnswer>, name: string): string {
+function buildProcessingMessage(answers: Record<string, WizardAnswer>, name: string, t: T): string {
   const hoods = Array.isArray(answers.preferred_locations?.value) ? answers.preferred_locations.value : []
   const types = Array.isArray(answers.property_type?.value) ? answers.property_type.value : []
 
-  const typeLabel = types.length === 1 ? PROPERTY_TYPE_PLURAL[types[0]] ?? "propiedades" : "propiedades"
-  const hoodsLabel =
-    hoods.length === 0
-      ? "Uruguay"
-      : hoods.length <= 2
-        ? hoods.join(" y ")
-        : `${hoods.slice(0, 2).join(", ")} y más`
+  const typeLabel = types.length === 1 ? propertyTypePlural(types[0], t) : t("wizard.propertyTypesPlural")
+  const hoodsLabel = joinHoods(hoods, t)
 
-  const lead = name ? `${name}, buscando` : "Buscando"
-  return `${lead} ${typeLabel} en ${hoodsLabel}...`
+  const lead = name ? t("wizard.processingLead", { name }) : t("wizard.processingLeadGeneric")
+  return `${lead} ${typeLabel} ${t("wizard.inLocation")} ${hoodsLabel}...`
 }
 
 function capitalize(name: string): string {
@@ -62,46 +73,70 @@ function capitalize(name: string): string {
 }
 
 /**
+ * Replaces a literal "{{NAME}}" token in any config string (intro copy,
+ * question titles, etc.) with the visitor's name. When the name isn't known
+ * yet, the token — and any leading space before it — is dropped instead of
+ * leaving a stray blank ("Excelente {{NAME}}!" -> "Excelente!" rather than
+ * "Excelente  !"), so the same string reads fine either way.
+ */
+function interpolateName(text: string, name: string): string {
+  return name ? text.replace(/\{\{NAME\}\}/g, name) : text.replace(/\s*\{\{NAME\}\}/g, "")
+}
+
+/**
  * Personalizes a handful of moments once we know the visitor's name — a few
  * spots per flow (not literally every question, which would read like a
  * mail-merge instead of a real touch), including one contextual callback to
  * an earlier answer so it feels like Wee is actually tracking the
- * conversation rather than reciting a fixed script.
+ * conversation rather than reciting a fixed script. Falls back to
+ * interpolateName so a plain "{{NAME}}" token dropped into a question's own
+ * title/subtitle in the config also works, without needing a case here.
  */
 function personalizeTitle(
   question: QuestionStep,
   name: string,
   answers: Record<string, WizardAnswer>,
-  isSellerFlow: boolean
+  isSellerFlow: boolean,
+  locale: Locale
 ): string {
-  if (!name) return question.title ?? ""
+  if (!name) return interpolateName(question.title ?? "", name)
 
   if (isSellerFlow) {
     switch (question.id) {
       case "property_type":
-        return `Contame, ${name} — ¿qué tipo de propiedad querés vender?`
+        return locale === "en"
+          ? `Tell me, ${name} — what type of property do you want to sell?`
+          : `Contame, ${name} — ¿qué tipo de propiedad querés vender?`
       case "contact_method":
-        return `Última pregunta, ${name} — ¿cómo preferís que te contactemos?`
+        return locale === "en"
+          ? `Last question, ${name} — how would you prefer we contact you?`
+          : `Última pregunta, ${name} — ¿cómo preferís que te contactemos?`
       default:
-        return question.title ?? ""
+        return interpolateName(question.title ?? "", name)
     }
   }
 
   switch (question.id) {
     case "intent":
-      return `Muy bien ${name}, comencemos por saber qué estás buscando`
+      return locale === "en"
+        ? `Great, ${name} — let's start with what you're looking for`
+        : `Muy bien ${name}, comencemos por saber qué estás buscando`
 
     case "preferred_locations":
-      return `Decime, ${name} — ¿qué zonas te interesan?`
+      return locale === "en" ? `Tell me, ${name} — which areas interest you?` : `Decime, ${name} — ¿qué zonas te interesan?`
 
     case "parking": {
       const hoods = Array.isArray(answers.preferred_locations?.value) ? answers.preferred_locations.value : []
+      if (locale === "en") {
+        const hoodsHint = hoods.length === 1 ? ` for ${hoods[0]}` : ""
+        return `Almost done, ${name} — do you need parking${hoodsHint}?`
+      }
       const hoodsHint = hoods.length === 1 ? ` para ${hoods[0]}` : ""
       return `Ya casi terminamos, ${name} — ¿necesitás cochera o garaje${hoodsHint}?`
     }
 
     default:
-      return question.title ?? ""
+      return interpolateName(question.title ?? "", name)
   }
 }
 
@@ -154,16 +189,16 @@ interface WizardProps {
 type MessagePhase = "typing" | "message" | "action"
 
 /** References the neighborhoods they actually picked, when there are any, instead of a flat generic sentence every time. */
-function buildCompletionBody(answers: Record<string, WizardAnswer>): string {
+function buildCompletionBody(answers: Record<string, WizardAnswer>, t: T): string {
   const hoods = Array.isArray(answers.preferred_locations?.value) ? answers.preferred_locations.value : []
   const hoodsClause =
     hoods.length === 0
       ? ""
       : hoods.length === 1
-        ? ` en ${hoods[0]}`
-        : ` en ${hoods.slice(0, -1).join(", ")} y ${hoods[hoods.length - 1]}`
+        ? ` ${t("wizard.inLocation")} ${hoods[0]}`
+        : ` ${t("wizard.inLocation")} ${hoods.slice(0, -1).join(", ")} ${t("wizard.and")} ${hoods[hoods.length - 1]}`
 
-  return `Armamos una selección curada${hoodsClause} según lo que nos contaste. Cuando encuentres algo que te encante, coordinamos la visita con un asesor.`
+  return t("wizard.completionBody", { hoods: hoodsClause })
 }
 
 export default function Wizard({
@@ -176,10 +211,16 @@ export default function Wizard({
 }: WizardProps) {
   const router = useRouter()
   const { setMode, setFilters, completeOnboarding, visitorName, setVisitorName } = useDiscover()
+  const { t, locale } = useTranslation()
 
   // Same question id ("property_type") means something different in each
   // config, so personalizeTitle needs to know which flow it's phrasing for.
   const isSellerFlow = config.id === "seller-onboarding"
+
+  // Swaps every step's title/subtitle/description/cta/placeholder/option
+  // labels to English when needed — the config's own ids/conditions/values
+  // never change, so useWizard's step logic is unaffected by locale.
+  const localizedConfig = useMemo(() => localizeConfig(config, locale), [config, locale])
 
   const [showSplash, setShowSplash] = useState(true)
 
@@ -197,7 +238,7 @@ export default function Wizard({
     reset,
     getSummary
   } = useWizard(
-    config,
+    localizedConfig,
     // Pre-fills a "full_name"-style question (e.g. the seller flow) when the
     // visitor already gave their name earlier in this session. Harmless for
     // configs with no such question — it just sits unused in the answers map.
@@ -406,12 +447,12 @@ export default function Wizard({
               <AssistantAvatar size={72} />
 
               <h1 className="mt-4 max-w-lg text-xl font-light leading-tight tracking-[-0.04em] text-foreground">
-                {currentStepData.title}
+                {interpolateName(currentStepData.title ?? "", visitorName)}
               </h1>
 
               {currentStepData.description && (
                 <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
-                  {currentStepData.description}
+                  {interpolateName(currentStepData.description, visitorName)}
                 </p>
               )}
 
@@ -422,7 +463,7 @@ export default function Wizard({
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleIntroContinue()
                 }}
-                placeholder="¿Cómo te llamas?"
+                placeholder={t("wizard.namePlaceholder")}
                 autoFocus
                 className="mt-6 w-full max-w-md rounded-full border border-border bg-card px-6 py-4 text-center text-base text-foreground outline-none transition placeholder:text-muted-foreground focus:border-[var(--weeggo-orange)]"
               />
@@ -433,7 +474,7 @@ export default function Wizard({
                 disabled={!nameInput.trim()}
                 className="mt-6 h-14 w-full max-w-md rounded-full bg-orange-500 text-md font-medium text-white transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
               >
-                {currentStepData.cta ?? "Comenzar"}
+                {currentStepData.cta ?? t("common.start")}
               </button>
 
               <button
@@ -441,7 +482,7 @@ export default function Wizard({
                 onClick={handleSkipAssistant}
                 className="mt-4 text-xs font-semibold text-muted-foreground underline underline-offset-2"
               >
-                Saltar al asistente
+                {t("wizard.skipAssistant")}
               </button>
             </div>
           </div>
@@ -463,7 +504,9 @@ export default function Wizard({
 
   const historyQuestions = questionSteps.slice(0, answeredCount)
 
-  const defaultCompletionHeading = visitorName ? `¡Listo, ${visitorName}!` : "¡Listo!"
+  const defaultCompletionHeading = visitorName
+    ? t("wizard.completionHeading", { name: visitorName })
+    : t("wizard.completionHeadingGeneric")
 
   let composeSlot: React.ReactNode = null
 
@@ -480,7 +523,7 @@ export default function Wizard({
             className="h-12 rounded-full text-[14px] font-bold text-white transition active:scale-[0.98]"
             style={{ background: "var(--weeggo-orange)" }}
           >
-            {currentStepData.cta ?? "Comenzar"}
+            {currentStepData.cta ?? t("common.start")}
           </button>
         </div>
       )
@@ -507,7 +550,7 @@ export default function Wizard({
           className="h-12 w-full rounded-full text-[14px] font-bold text-white transition active:scale-[0.98]"
           style={{ background: "var(--weeggo-orange)" }}
         >
-          Continuar
+          {t("common.continue")}
         </button>
       </div>
     )
@@ -520,7 +563,7 @@ export default function Wizard({
           className="h-12 rounded-full text-[14px] font-bold text-white transition active:scale-[0.98]"
           style={{ background: "var(--weeggo-orange)" }}
         >
-          {completion?.ctaLabel ?? "Ver mi selección"}
+          {completion?.ctaLabel ?? t("wizard.viewSelection")}
         </button>
         {completion?.showRestart !== false && (
           <button
@@ -528,7 +571,7 @@ export default function Wizard({
             onClick={handleRestart}
             className="text-center text-[13px] font-semibold text-muted-foreground underline"
           >
-            Volver a empezar
+            {t("wizard.startOver")}
           </button>
         )}
       </div>
@@ -561,7 +604,7 @@ export default function Wizard({
 
             {historyQuestions.map((q) => (
               <div key={q.id} className="space-y-3">
-                <AssistantMessage text={personalizeTitle(q, visitorName, answers, isSellerFlow)} />
+                <AssistantMessage text={personalizeTitle(q, visitorName, answers, isSellerFlow, locale)} />
                 <UserMessage text={formatAnswerAsMessage(q, answers[q.id])} initials={initials} />
               </div>
             ))}
@@ -573,7 +616,7 @@ export default function Wizard({
                 ) : (
                   <AssistantMessage
                     key={currentStepData.id}
-                    text={currentStepData.description ?? currentStepData.title ?? ""}
+                    text={interpolateName(currentStepData.description ?? currentStepData.title ?? "", visitorName)}
                     typewriter={phase === "message"}
                     onTypingDone={handleTypingDone}
                   />
@@ -588,7 +631,7 @@ export default function Wizard({
                 ) : (
                   <AssistantMessage
                     key={currentQuestion.id}
-                    text={personalizeTitle(currentQuestion, visitorName, answers, isSellerFlow)}
+                    text={personalizeTitle(currentQuestion, visitorName, answers, isSellerFlow, locale)}
                     typewriter={phase === "message"}
                     onTypingDone={handleTypingDone}
                   />
@@ -612,8 +655,8 @@ export default function Wizard({
                     key={currentStepData.id}
                     text={
                       visitorName
-                        ? `¡Buenísimo, ${visitorName}! Ya tengo todo lo que necesito.`
-                        : "¡Buenísimo! Ya tengo todo lo que necesito."
+                        ? t("wizard.summaryReady", { name: visitorName })
+                        : t("wizard.summaryReadyGeneric")
                     }
                     typewriter={phase === "message"}
                     onTypingDone={handleTypingDone}
@@ -629,7 +672,11 @@ export default function Wizard({
                 ) : (
                   <AssistantMessage
                     key={currentStepData.id}
-                    text={(processingMessage ?? buildProcessingMessage)(answers, visitorName)}
+                    text={
+                      processingMessage
+                        ? processingMessage(answers, visitorName)
+                        : buildProcessingMessage(answers, visitorName, t)
+                    }
                     typewriter={phase === "message"}
                   />
                 )}
@@ -643,7 +690,7 @@ export default function Wizard({
                 ) : (
                   <AssistantMessage
                     key={currentStepData.id}
-                    text={`${completion?.heading ?? defaultCompletionHeading} ${completion?.body ?? buildCompletionBody(answers)}`}
+                    text={`${completion?.heading ?? defaultCompletionHeading} ${completion?.body ?? buildCompletionBody(answers, t)}`}
                     typewriter={phase === "message"}
                     onTypingDone={handleTypingDone}
                   />

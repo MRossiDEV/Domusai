@@ -49,7 +49,7 @@ export const sellerOnboarding: WizardConfig = {
         "Contanos los detalles y un agente te contacta",
 
       description:
-        "Un par de preguntas rápidas sobre la propiedad y tus datos de contacto.",
+        "Excelente {{NAME}}! Si queres vender, voy a necesitar hacerte un par de preguntas rápidas sobre la propiedad y tus datos de contacto.",
 
       cta:
         "Comenzar"

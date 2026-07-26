@@ -22,7 +22,7 @@ export default function Splash({ onComplete }: SplashProps) {
       exit={{ opacity: 0 }}
       className="absolute inset-0 z-50 flex h-full w-full flex-col items-center justify-center bg-background text-foreground"
     >
-      <Logo dot={false} className="text-3xl" />
+      <Logo height={26} />
       <span className="mt-3 text-xs uppercase tracking-[0.3em] text-muted-foreground">Loading</span>
     </motion.div>
   )

@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 
 import { priceFor } from "@/lib/discover/scoring";
 import type { Listing, Mode } from "@/lib/discover/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { ViewingForm } from "./ViewingForm";
 
 const SPARK_COLORS = ["var(--weeggo-orange)", "var(--weeggo-blue)", "var(--weeggo-green)"];
@@ -35,6 +36,7 @@ export function MatchCelebration({
   onDismiss: () => void;
 }) {
   const [showForm, setShowForm] = useState(false);
+  const { t } = useTranslation();
 
   function close() {
     setShowForm(false);
@@ -59,7 +61,7 @@ export function MatchCelebration({
           >
             <button
               type="button"
-              aria-label="Dismiss"
+              aria-label={t("discover.dismissAria")}
               onClick={close}
               className="absolute right-3 top-3 z-10 flex size-8 items-center justify-center rounded-full bg-black/30 text-white"
             >
@@ -89,9 +91,9 @@ export function MatchCelebration({
                 </motion.div>
               </div>
 
-              <h2 className="mt-4 text-[22px] font-extrabold tracking-tight">It&apos;s a match!</h2>
+              <h2 className="mt-4 text-[22px] font-extrabold tracking-tight">{t("discover.matchHeading")}</h2>
               <p className="mt-1 max-w-[240px] text-[13px] leading-snug text-muted-foreground">
-                This one lines up with what you&apos;re after better than almost anything else in your deck.
+                {t("discover.matchBody")}
               </p>
             </div>
 
@@ -100,7 +102,7 @@ export function MatchCelebration({
                 {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary Supabase-stored URL */}
                 <img src={listing.image} alt={listing.title} className="size-16 shrink-0 rounded-xl object-cover" />
                 <div className="min-w-0 py-0.5">
-                  <div className="truncate text-[15px] font-extrabold">{priceFor(listing, mode)}</div>
+                  <div className="truncate text-[15px] font-extrabold">{priceFor(listing, mode, t)}</div>
                   <div className="truncate text-[12.5px] font-semibold text-muted-foreground">
                     {listing.title} · {listing.city}
                   </div>
@@ -117,14 +119,14 @@ export function MatchCelebration({
                     className="w-full rounded-[var(--weeggo-radius-md)] py-[13px] text-[13.5px] font-bold text-white"
                     style={{ background: "var(--weeggo-blue)" }}
                   >
-                    Book a viewing
+                    {t("discover.bookViewing")}
                   </button>
                   <button
                     type="button"
                     onClick={close}
                     className="w-full py-1 text-[13px] font-bold text-muted-foreground"
                   >
-                    Keep swiping
+                    {t("discover.keepSwiping")}
                   </button>
                 </div>
               )}

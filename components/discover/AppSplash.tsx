@@ -23,16 +23,8 @@ export function AppSplash({ onComplete }: { onComplete: () => void }) {
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="flex items-center gap-[3px] text-[34px]"
       >
-        <Logo dot={false} />
-        <motion.span
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.3, ease: "backOut" }}
-          className="ml-1 inline-block size-2.5 rounded-full"
-          style={{ background: "var(--weeggo-green)" }}
-        />
+        <Logo height={30} />
       </motion.div>
 
       <motion.div

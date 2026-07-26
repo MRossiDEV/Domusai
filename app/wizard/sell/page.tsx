@@ -8,18 +8,20 @@ import { sellerOnboarding } from "../data/sellerOnboarding"
 import { mapSellerAnswersToLead } from "../lib/seller-answers-to-lead"
 import { submitSellerLead } from "../actions"
 import { useDiscover } from "@/lib/discover/filters-context"
+import { useTranslation } from "@/lib/i18n/useTranslation"
 import type { WizardAnswer } from "../types"
 
 export default function SellWizardPage() {
   const router = useRouter()
   const { visitorName } = useDiscover()
+  const { t } = useTranslation()
 
   async function handleFinish(summary: Record<string, WizardAnswer>) {
     const { contact, property } = mapSellerAnswersToLead(summary)
     const result = await submitSellerLead(contact, property)
 
     if (!result.ok) {
-      toast.error("No pudimos enviar tu información. Un agente igual puede contactarte si volvés a intentarlo.")
+      toast.error(t("sell.errorToast"))
     }
   }
 
@@ -27,13 +29,15 @@ export default function SellWizardPage() {
     <Wizard
       config={sellerOnboarding}
       collectNameOnIntro={false}
-      progressLabel="Tu propiedad"
+      progressLabel={t("sell.progressLabel")}
       onFinish={handleFinish}
-      processingMessage={(_, name) => (name ? `Enviando tus datos, ${name}...` : "Enviando tus datos...")}
+      processingMessage={(_, name) =>
+        name ? t("sell.sendingWithName", { name }) : t("sell.sendingGeneric")
+      }
       completion={{
-        heading: visitorName ? `¡Gracias, ${visitorName}!` : "¡Gracias!",
-        body: "Un agente de WEEGGO va a revisar los datos de tu propiedad y se va a poner en contacto para coordinar los próximos pasos.",
-        ctaLabel: "Volver al inicio",
+        heading: visitorName ? t("sell.thankYouWithName", { name: visitorName }) : t("sell.thankYouGeneric"),
+        body: t("sell.completionBody"),
+        ctaLabel: t("sell.backToHome"),
         onCta: () => router.push("/"),
         showRestart: false,
       }}

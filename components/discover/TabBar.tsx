@@ -5,23 +5,25 @@ import { usePathname } from "next/navigation";
 import { Compass, Heart, Bell, CircleUserRound, type LucideIcon } from "lucide-react";
 
 import { useDiscover } from "@/lib/discover/filters-context";
+import { useTranslation, type TranslationKey } from "@/lib/i18n/useTranslation";
 
 interface TabDef {
   href: string;
-  label: string;
+  labelKey: TranslationKey;
   icon: LucideIcon;
 }
 
 const TABS: TabDef[] = [
-  { href: "/", label: "Discover", icon: Compass },
-  { href: "/shortlist", label: "Shortlist", icon: Heart },
-  { href: "/notifications", label: "Alerts", icon: Bell },
-  { href: "/profile", label: "Profile", icon: CircleUserRound },
+  { href: "/", labelKey: "nav.discover", icon: Compass },
+  { href: "/shortlist", labelKey: "nav.shortlist", icon: Heart },
+  { href: "/notifications", labelKey: "nav.alerts", icon: Bell },
+  { href: "/profile", labelKey: "nav.profile", icon: CircleUserRound },
 ];
 
 export function TabBar() {
   const pathname = usePathname();
   const { unreadNotificationCount } = useDiscover();
+  const { t } = useTranslation();
 
   return (
     <nav className="flex shrink-0 border-t border-border bg-card px-1.5 pt-2.5 pb-[calc(env(safe-area-inset-bottom)+14px)] safe-bottom">
@@ -33,7 +35,7 @@ export function TabBar() {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`relative flex flex-1 flex-col items-center gap-1 text-[10.5px] font-bold ${
+            className={`relative flex flex-1 flex-col items-center pb-2 gap-1 text-[10.5px] font-bold ${
               isActive ? "text-primary" : "text-muted-foreground"
             }`}
           >
@@ -48,7 +50,7 @@ export function TabBar() {
                 </span>
               )}
             </span>
-            {tab.label}
+            {t(tab.labelKey)}
           </Link>
         );
       })}

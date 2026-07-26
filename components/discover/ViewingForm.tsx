@@ -7,11 +7,13 @@ import { useDiscover } from "@/lib/discover/filters-context";
 import type { Listing } from "@/lib/discover/types";
 import type { ContactInformation } from "@/app/wizard/types";
 import { requestViewing } from "@/app/(app)/actions";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 const CONTACT_METHODS: ContactInformation["contactMethod"][] = ["WhatsApp", "Email", "Llamada"];
 
 export function ViewingForm({ listing, onDone }: { listing: Listing; onDone: () => void }) {
   const { filters, addNotification } = useDiscover();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [form, setForm] = useState({
     fullName: "",
@@ -22,20 +24,26 @@ export function ViewingForm({ listing, onDone }: { listing: Listing; onDone: () 
   });
   const [error, setError] = useState("");
 
+  const CONTACT_LABELS: Record<ContactInformation["contactMethod"], string> = {
+    WhatsApp: t("viewingForm.contactWhatsApp"),
+    Email: t("viewingForm.contactEmail"),
+    Llamada: t("viewingForm.contactCall"),
+  };
+
   function submit() {
     if (!form.fullName || !form.email || !form.phone) {
-      setError("Fill in your name, email, and phone to continue.");
+      setError(t("viewingForm.validationError"));
       return;
     }
     setError("");
     startTransition(async () => {
       const result = await requestViewing(listing.id, form, filters);
       if (!result.ok) {
-        toast.error("Couldn't send your request — try again.");
+        toast.error(t("viewingForm.sendError"));
         return;
       }
-      toast.success("Viewing requested — the agent will confirm shortly");
-      addNotification(`Viewing requested for ${listing.title} · ${listing.city}`);
+      toast.success(t("viewingForm.successToast"));
+      addNotification(t("viewingForm.notificationMessage", { title: listing.title, city: listing.city }));
       onDone();
     });
   }
@@ -45,20 +53,20 @@ export function ViewingForm({ listing, onDone }: { listing: Listing; onDone: () 
       <input
         value={form.fullName}
         onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
-        placeholder="Full name"
+        placeholder={t("viewingForm.fullNamePlaceholder")}
         className="rounded-xl border border-border bg-card px-3.5 py-3 text-sm font-semibold outline-none focus:border-primary"
       />
       <input
         value={form.email}
         type="email"
         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-        placeholder="Email"
+        placeholder={t("viewingForm.emailPlaceholder")}
         className="rounded-xl border border-border bg-card px-3.5 py-3 text-sm font-semibold outline-none focus:border-primary"
       />
       <input
         value={form.phone}
         onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-        placeholder="Phone / WhatsApp"
+        placeholder={t("viewingForm.phonePlaceholder")}
         className="rounded-xl border border-border bg-card px-3.5 py-3 text-sm font-semibold outline-none focus:border-primary"
       />
       <div className="flex gap-2">
@@ -73,7 +81,7 @@ export function ViewingForm({ listing, onDone }: { listing: Listing; onDone: () 
                 : "border-border bg-card text-foreground"
             }`}
           >
-            {method}
+            {CONTACT_LABELS[method]}
           </button>
         ))}
       </div>
@@ -85,7 +93,7 @@ export function ViewingForm({ listing, onDone }: { listing: Listing; onDone: () 
         className="rounded-[var(--weeggo-radius-md)] py-[13px] text-[13.5px] font-bold text-white disabled:opacity-60"
         style={{ background: "var(--weeggo-blue)" }}
       >
-        {pending ? "Sending…" : "Confirm request"}
+        {pending ? t("viewingForm.sending") : t("viewingForm.confirmRequest")}
       </button>
     </div>
   );

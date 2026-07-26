@@ -1,37 +1,44 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useDiscover } from "@/lib/discover/filters-context";
 import { fmtUSD, propertyTypeLabel } from "@/lib/discover/scoring";
 import { LIFESTYLES } from "@/lib/discover/constants";
-
-const MODE_LABEL: Record<string, string> = {
-  buy: "Buying",
-  rent: "Renting",
-  invest: "Investing",
-};
+import { useTranslation, type TranslationKey } from "@/lib/i18n/useTranslation";
 
 export default function ProfilePage() {
-  const { mode, filters, liked, passed, reset, openWizard, visitorName } = useDiscover();
+  const router = useRouter();
+  const { mode, filters, liked, passed, reset, visitorName } = useDiscover();
+  const { t } = useTranslation();
   const initials = visitorName ? visitorName.slice(0, 2).toUpperCase() : "GE";
+
+  const MODE_LABEL: Record<string, TranslationKey> = {
+    buy: "profile.modeBuying",
+    rent: "profile.modeRenting",
+    invest: "profile.modeInvesting",
+  };
 
   const prioritiesLabel = filters.lifestyles.length
     ? filters.lifestyles.map((v) => LIFESTYLES.find((l) => l.value === v)?.label ?? v).join(", ")
-    : "No preference";
-  const hoodsLabel = filters.hoods.length ? filters.hoods.join(", ") : "Anywhere";
+    : t("profile.noPreference");
+  const hoodsLabel = filters.hoods.length ? filters.hoods.join(", ") : t("profile.anywhere");
   const budgetLabel = filters.budgetMax
     ? mode === "rent"
-      ? `$${filters.budgetMax}/mo`
+      ? `$${filters.budgetMax}${t("discover.perMonth")}`
       : fmtUSD(filters.budgetMax)
-    : "No limit";
+    : t("profile.noLimit");
   const typeLabel =
-    (filters.propertyTypes.length ? filters.propertyTypes.map(propertyTypeLabel).join("/") : "Any") +
+    (filters.propertyTypes.length
+      ? filters.propertyTypes.map((type) => propertyTypeLabel(type, t)).join("/")
+      : t("profile.anyType")) +
     " · " +
-    (filters.minBeds ? `${filters.minBeds}+ bed` : "Any beds") +
+    (filters.minBeds ? t("profile.bedsSuffix", { n: filters.minBeds }) : t("profile.anyBeds")) +
     " · " +
-    (filters.minBaths ? `${filters.minBaths}+ bath` : "Any bath");
+    (filters.minBaths ? t("profile.bathsSuffix", { n: filters.minBaths }) : t("profile.anyBath"));
   const amenitiesLabel = filters.amenities.length
-    ? filters.amenities.join(", ") + (filters.amenitiesRequired ? " (required)" : "")
-    : "None selected";
+    ? filters.amenities.join(", ") + (filters.amenitiesRequired ? ` ${t("profile.required")}` : "")
+    : t("profile.none");
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-[26px] pb-[18px]" style={{ background: "var(--weeggo-paper-dim)" }}>
@@ -41,37 +48,37 @@ export default function ProfilePage() {
       >
         {initials}
       </div>
-      <div className="mt-3 mb-0.5 text-[19px] font-extrabold">{visitorName || "Guest explorer"}</div>
-      <div className="mb-5 text-[12.5px] text-muted-foreground">{MODE_LABEL[mode]} · Montevideo</div>
+      <div className="mt-3 mb-0.5 text-[19px] font-extrabold">{visitorName || t("profile.guestExplorer")}</div>
+      <div className="mb-5 text-[12.5px] text-muted-foreground">{t(MODE_LABEL[mode])} · Montevideo</div>
 
-      <SectionTitle>Your filters</SectionTitle>
-      <ProfileRow label="Priorities" value={prioritiesLabel} />
-      <ProfileRow label="Neighborhoods" value={hoodsLabel} />
-      <ProfileRow label="Budget" value={budgetLabel} />
-      <ProfileRow label="Type & size" value={typeLabel} />
-      <ProfileRow label="Amenities" value={amenitiesLabel} />
+      <SectionTitle>{t("profile.yourFilters")}</SectionTitle>
+      <ProfileRow label={t("profile.priorities")} value={prioritiesLabel} />
+      <ProfileRow label={t("profile.neighborhoods")} value={hoodsLabel} />
+      <ProfileRow label={t("profile.budget")} value={budgetLabel} />
+      <ProfileRow label={t("profile.typeAndSize")} value={typeLabel} />
+      <ProfileRow label={t("profile.amenities")} value={amenitiesLabel} />
       <button
         type="button"
-        onClick={openWizard}
+        onClick={() => router.push("/wizard")}
         className="mt-3.5 w-full rounded-[var(--weeggo-radius-md)] py-[13px] text-[13.5px] font-bold text-white"
         style={{ background: "var(--weeggo-blue)" }}
       >
-        Edit filters
+        {t("profile.editFilters")}
       </button>
 
-      <SectionTitle>Activity</SectionTitle>
-      <ProfileRow label="Shortlisted" value={String(liked.length)} />
-      <ProfileRow label="Passed" value={String(passed.length)} />
+      <SectionTitle>{t("profile.activity")}</SectionTitle>
+      <ProfileRow label={t("profile.shortlisted")} value={String(liked.length)} />
+      <ProfileRow label={t("profile.passed")} value={String(passed.length)} />
 
       <button
         type="button"
         onClick={() => {
           reset();
-          openWizard();
+          router.push("/wizard");
         }}
         className="mx-auto mt-3.5 block text-xs text-muted-foreground underline"
       >
-        Start over from the beginning
+        {t("profile.startOver")}
       </button>
     </div>
   );

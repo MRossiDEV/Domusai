@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 
 import type { Listing, Mode } from "@/lib/discover/types";
 import { priceFor, propertyTypeLabel } from "@/lib/discover/scoring";
+import type { TranslationKey } from "@/lib/i18n/useTranslation";
 
 const SWIPE_THRESHOLD = 110;
 
@@ -14,6 +15,7 @@ export type SwipeAction = "like" | "pass" | "super";
 interface SwipeCardProps {
   listing: Listing;
   mode: Mode;
+  t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
   score: number;
   yieldPct: number | null;
   depth: number;
@@ -28,6 +30,7 @@ interface SwipeCardProps {
 export function SwipeCard({
   listing,
   mode,
+  t,
   score,
   yieldPct,
   depth,
@@ -89,11 +92,15 @@ export function SwipeCard({
   const statsItems =
     mode === "invest"
       ? [
-          yieldPct !== null ? `${yieldPct}% yield` : "Yield n/a",
-          `${listing.bedrooms} bed`,
+          yieldPct !== null ? t("discover.yieldLabel", { pct: yieldPct }) : t("discover.yieldNa"),
+          t("discover.bedsLabel", { n: listing.bedrooms }),
           `${listing.areaM2} m²`,
         ]
-      : [`${listing.bedrooms} bed`, `${listing.areaM2} m²`, propertyTypeLabel(listing.propertyType)];
+      : [
+          t("discover.bedsLabel", { n: listing.bedrooms }),
+          `${listing.areaM2} m²`,
+          propertyTypeLabel(listing.propertyType, t),
+        ];
 
   return (
     <motion.div
@@ -131,7 +138,7 @@ export function SwipeCard({
               e.stopPropagation();
               onQuickLike();
             }}
-            aria-label="Shortlist"
+            aria-label={t("discover.shortlistAria")}
             className="absolute right-3 top-3 z-10 flex size-[34px] items-center justify-center rounded-full bg-white/95 shadow-[0_4px_10px_-3px_rgba(0,0,0,0.3)]"
             style={{ color: "var(--weeggo-orange)" }}
           >
@@ -150,26 +157,26 @@ export function SwipeCard({
               className="pointer-events-none absolute left-5 top-8 -rotate-6 rounded-full px-4 py-1.5 text-[13px] font-bold uppercase tracking-wide text-white shadow-[0_6px_16px_-4px_rgba(0,0,0,0.35)]"
               style={{ opacity: likeOpacity, background: "var(--weeggo-orange)" }}
             >
-              Shortlist
+              {t("discover.stampShortlist")}
             </motion.div>
             <motion.div
               className="pointer-events-none absolute right-5 top-8 rotate-6 rounded-full px-4 py-1.5 text-[13px] font-bold uppercase tracking-wide text-white shadow-[0_6px_16px_-4px_rgba(0,0,0,0.35)]"
               style={{ opacity: nopeOpacity, background: "var(--weeggo-blue)" }}
             >
-              Pass
+              {t("discover.stampPass")}
             </motion.div>
             <motion.div
               className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2 rounded-full px-4 py-1.5 text-[13px] font-bold uppercase tracking-wide text-white shadow-[0_6px_16px_-4px_rgba(0,0,0,0.35)]"
               style={{ opacity: superOpacity, background: "var(--weeggo-green)" }}
             >
-              Top pick
+              {t("discover.stampTopPick")}
             </motion.div>
           </>
         )}
 
         <div className="absolute inset-x-[18px] bottom-4 z-10 text-white">
           <div className="text-[29px] font-extrabold leading-none tracking-tight">
-            {priceFor(listing, mode)}
+            {priceFor(listing, mode, t)}
           </div>
           <div className="mt-1 text-[13px] font-semibold opacity-90">
             {listing.title} · {listing.city}
@@ -189,7 +196,9 @@ export function SwipeCard({
                 }}
               />
             </div>
-            <div className="font-weeggo-mono whitespace-nowrap text-[11px] font-medium">{score}% match</div>
+            <div className="font-weeggo-mono whitespace-nowrap text-[11px] font-medium">
+              {t("discover.matchLabel", { pct: score })}
+            </div>
           </div>
         </div>
       </div>

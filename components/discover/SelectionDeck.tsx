@@ -8,6 +8,7 @@ import { useDiscover } from "@/lib/discover/filters-context";
 import { buildDeck } from "@/lib/discover/deck";
 import { matchScore, yieldPct } from "@/lib/discover/scoring";
 import type { Listing } from "@/lib/discover/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { SwipeCard, type SwipeAction } from "./SwipeCard";
 import { PropertyDrawer } from "./PropertyDrawer";
 
@@ -23,6 +24,7 @@ const CURATED_SIZE = 8;
 export function SelectionDeck({ listings }: { listings: Listing[] }) {
   const router = useRouter();
   const { mode, filters, liked, passed, like, superlike, pass, openListing, visitorName } = useDiscover();
+  const { t } = useTranslation();
   const [pendingAction, setPendingAction] = useState<SwipeAction | null>(null);
 
   const [curatedIds] = useState<string[]>(() => {
@@ -67,10 +69,12 @@ export function SelectionDeck({ listings }: { listings: Listing[] }) {
     <div className="theme-weeggo weeggo-bg relative flex h-dvh flex-col overflow-hidden text-foreground">
       <div className="px-5 pt-5 pb-2 text-center safe-top">
         <div className="mb-1 text-[13px] font-bold">
-          {visitorName ? `La selección de ${visitorName}` : "Tu selección curada"}
+          {visitorName
+            ? t("discover.selectionForName", { name: visitorName })
+            : t("discover.selectionGeneric")}
         </div>
         <div className="font-weeggo-mono text-[11px] text-primary">
-          {deck.length} de {curatedIds.length}
+          {t("discover.selectionCount", { count: deck.length, total: curatedIds.length })}
         </div>
       </div>
 
@@ -86,6 +90,7 @@ export function SelectionDeck({ listings }: { listings: Listing[] }) {
                   key={listing.id}
                   listing={listing}
                   mode={mode}
+                  t={t}
                   score={matchScore(listing, filters, mode)}
                   yieldPct={yieldPct(listing)}
                   depth={depth}
@@ -103,7 +108,7 @@ export function SelectionDeck({ listings }: { listings: Listing[] }) {
       <div className="flex items-center justify-center gap-[18px] pt-1.5 pb-2">
         <button
           type="button"
-          aria-label="Pass"
+          aria-label={t("discover.passAria")}
           onClick={() => triggerTopAction("pass")}
           className="flex size-14 items-center justify-center rounded-full border border-border bg-card text-primary shadow-[0_10px_20px_-8px_rgba(24,24,27,0.18)]"
         >
@@ -111,7 +116,7 @@ export function SelectionDeck({ listings }: { listings: Listing[] }) {
         </button>
         <button
           type="button"
-          aria-label="Top pick"
+          aria-label={t("discover.topPickAria")}
           onClick={() => triggerTopAction("super")}
           className="flex size-[46px] items-center justify-center rounded-full border border-border bg-card shadow-[0_10px_20px_-8px_rgba(24,24,27,0.18)]"
           style={{ color: "var(--weeggo-green)" }}
@@ -120,7 +125,7 @@ export function SelectionDeck({ listings }: { listings: Listing[] }) {
         </button>
         <button
           type="button"
-          aria-label="Shortlist"
+          aria-label={t("discover.shortlistAria")}
           onClick={() => triggerTopAction("like")}
           className="flex size-14 items-center justify-center rounded-full text-white shadow-[0_10px_20px_-8px_rgba(24,24,27,0.18)]"
           style={{ background: "var(--weeggo-orange)" }}
@@ -134,7 +139,7 @@ export function SelectionDeck({ listings }: { listings: Listing[] }) {
         onClick={() => router.push("/")}
         className="pb-6 text-xs font-semibold text-muted-foreground underline safe-bottom"
       >
-        Saltar a explorar todo
+        {t("discover.skipToExplore")}
       </button>
 
       <PropertyDrawer listings={listings} />

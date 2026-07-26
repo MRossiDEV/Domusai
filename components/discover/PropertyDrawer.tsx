@@ -6,6 +6,7 @@ import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useDiscover } from "@/lib/discover/filters-context";
 import { matchScore, priceFor, propertyTypeLabel, yieldPct } from "@/lib/discover/scoring";
 import type { Listing } from "@/lib/discover/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { ViewingForm } from "./ViewingForm";
 
 export function PropertyDrawer({ listings }: { listings: Listing[] }) {
@@ -35,6 +36,7 @@ function PropertyDetail({
   onClose: () => void;
 }) {
   const [showForm, setShowForm] = useState(false);
+  const { t } = useTranslation();
   const score = matchScore(listing, filters, mode);
   const y = yieldPct(listing);
 
@@ -47,19 +49,19 @@ function PropertyDetail({
         className="-mx-[22px] h-[200px] w-[calc(100%+44px)] object-cover"
       />
 
-      <h2 className="mt-4 mb-0.5 text-[25px] font-extrabold">{priceFor(listing, mode)}</h2>
+      <h2 className="mt-4 mb-0.5 text-[25px] font-extrabold">{priceFor(listing, mode, t)}</h2>
       <div className="mb-3.5 text-[13px] font-semibold text-muted-foreground">
         {listing.title} · {listing.city}
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2.5">
-        <Stat label={`${listing.bedrooms} bed`} />
+        <Stat label={t("discover.bedsLabel", { n: listing.bedrooms })} />
         <Stat label={`${listing.areaM2} m²`} />
-        <Stat label={propertyTypeLabel(listing.propertyType)} />
+        <Stat label={propertyTypeLabel(listing.propertyType, t)} />
         {mode === "invest" ? (
-          <Stat label={y !== null ? `${y}% gross yield` : "Yield n/a"} />
+          <Stat label={y !== null ? t("discover.grossYieldLabel", { pct: y }) : t("discover.yieldNa")} />
         ) : (
-          <Stat label={`${score}% match`} />
+          <Stat label={t("discover.matchLabel", { pct: score })} />
         )}
       </div>
 
@@ -88,7 +90,7 @@ function PropertyDetail({
           className="w-full rounded-[var(--weeggo-radius-md)] py-[13px] text-[13.5px] font-bold text-white"
           style={{ background: "var(--weeggo-blue)" }}
         >
-          Request a viewing
+          {t("discover.requestViewing")}
         </button>
       )}
     </>

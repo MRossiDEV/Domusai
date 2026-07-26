@@ -8,7 +8,6 @@ import type { Listing } from "@/lib/discover/types";
 import { AppSplash } from "./AppSplash";
 import { AppHeader } from "./AppHeader";
 import { TabBar } from "./TabBar";
-import { FiltersWizard } from "./FiltersWizard";
 import { PropertyDrawer } from "./PropertyDrawer";
 import { CompareDrawer } from "./CompareDrawer";
 
@@ -41,7 +40,6 @@ export function AppShellClient({ listings, children }: { listings: Listing[]; ch
       <AppHeader />
       <main className="flex min-h-0 flex-1 flex-col">{children}</main>
       <TabBar />
-      <FiltersWizard listings={listings} />
       <PropertyDrawer listings={listings} />
       <CompareDrawer listings={listings} />
     </div>

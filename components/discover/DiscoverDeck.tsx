@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Heart, SlidersHorizontal, Sparkles, Star, X } from "lucide-react";
 
 import { useDiscover } from "@/lib/discover/filters-context";
 import { buildDeck } from "@/lib/discover/deck";
 import { matchScore, yieldPct } from "@/lib/discover/scoring";
 import type { Listing } from "@/lib/discover/types";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 import { SwipeCard, type SwipeAction } from "./SwipeCard";
 import { MatchCelebration } from "./MatchCelebration";
 
@@ -14,7 +16,9 @@ import { MatchCelebration } from "./MatchCelebration";
 const MATCH_THRESHOLD = 90;
 
 export function DiscoverDeck({ listings }: { listings: Listing[] }) {
-  const { mode, filters, liked, passed, like, superlike, pass, openListing, openWizard } = useDiscover();
+  const router = useRouter();
+  const { t } = useTranslation();
+  const { mode, filters, liked, passed, like, superlike, pass, openListing } = useDiscover();
   const [pendingAction, setPendingAction] = useState<SwipeAction | null>(null);
   const [matchListing, setMatchListing] = useState<Listing | null>(null);
 
@@ -46,18 +50,18 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
   const filterPill = (
     <button
       type="button"
-      onClick={openWizard}
+      onClick={() => router.push("/wizard")}
       className="absolute right-4 top-3.5 z-20 flex items-center gap-1.5 rounded-full bg-[rgba(24,24,27,0.82)] px-3.5 py-2.5 text-xs font-bold text-white backdrop-blur-sm"
     >
       <SlidersHorizontal className="size-3.5" />
-      Filters
+      {t("discover.filters")}
     </button>
   );
 
   const relaxedBanner = relaxedLevel > 0 && visible.length > 0 && (
     <div className="absolute inset-x-4 top-3.5 z-20 flex max-w-[calc(100%-90px)] items-center gap-1.5 rounded-full bg-[var(--weeggo-blue-tint)] px-3.5 py-2.5 text-xs font-bold text-primary">
       <Sparkles className="size-3.5 shrink-0" />
-      <span className="truncate">Nothing fit exactly — widened your search</span>
+      <span className="truncate">{t("discover.widenedSearch")}</span>
     </div>
   );
 
@@ -67,19 +71,19 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
         {filterPill}
         <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
           <div className="text-[38px]">🏁</div>
-          <h3 className="mt-3.5 mb-1.5 text-[21px] font-extrabold">That&apos;s everyone for now</h3>
+          <h3 className="mt-3.5 mb-1.5 text-[21px] font-extrabold">{t("discover.emptyTitle")}</h3>
           <p className="mb-4.5 text-[13.5px] leading-relaxed text-muted-foreground">
-            You&apos;ve seen every place we have — even outside your filters.
+            {t("discover.emptyBody1")}
             <br />
-            Check your shortlist or come back later for new listings.
+            {t("discover.emptyBody2")}
           </p>
           <button
             type="button"
-            onClick={openWizard}
+            onClick={() => router.push("/wizard")}
             className="rounded-[var(--weeggo-radius-md)] px-[22px] py-[13px] text-[13.5px] font-bold text-white"
             style={{ background: "var(--weeggo-blue)" }}
           >
-            Adjust filters
+            {t("discover.adjustFilters")}
           </button>
         </div>
 
@@ -97,7 +101,7 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
     <div className="relative flex min-h-0 flex-1 flex-col" style={{ background: "var(--weeggo-paper-dim)" }}>
       {filterPill}
       {relaxedBanner}
-      <div className="relative min-h-0 flex-1 p-4">
+      <div className="relative mt-12 min-h-0 flex-1 p-4">
         <div className="relative size-full">
           {visible
             .slice()
@@ -109,6 +113,7 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
                   key={listing.id}
                   listing={listing}
                   mode={mode}
+                  t={t}
                   score={matchScore(listing, filters, mode)}
                   yieldPct={yieldPct(listing)}
                   depth={depth}
@@ -126,7 +131,7 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
       <div className="flex items-center justify-center gap-[18px] pt-1.5 pb-[18px]">
         <button
           type="button"
-          aria-label="Pass"
+          aria-label={t("discover.passAria")}
           onClick={() => triggerTopAction("pass")}
           className="flex size-14 items-center justify-center rounded-full border border-border bg-card text-primary shadow-[0_10px_20px_-8px_rgba(24,24,27,0.18)]"
         >
@@ -134,7 +139,7 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
         </button>
         <button
           type="button"
-          aria-label="Top pick"
+          aria-label={t("discover.topPickAria")}
           onClick={() => triggerTopAction("super")}
           className="flex size-[46px] items-center justify-center rounded-full border border-border bg-card shadow-[0_10px_20px_-8px_rgba(24,24,27,0.18)]"
           style={{ color: "var(--weeggo-green)" }}
@@ -143,7 +148,7 @@ export function DiscoverDeck({ listings }: { listings: Listing[] }) {
         </button>
         <button
           type="button"
-          aria-label="Shortlist"
+          aria-label={t("discover.shortlistAria")}
           onClick={() => triggerTopAction("like")}
           className="flex size-14 items-center justify-center rounded-full text-white shadow-[0_10px_20px_-8px_rgba(24,24,27,0.18)]"
           style={{ background: "var(--weeggo-orange)" }}

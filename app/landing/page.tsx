@@ -6,10 +6,13 @@ import { DollarSign, Home, Key, TrendingUp } from "lucide-react";
 
 import { useDiscover } from "@/lib/discover/filters-context";
 import { Logo } from "@/components/Logo";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function LandingPage() {
   const router = useRouter();
   const { completeOnboarding, visitorName } = useDiscover();
+  const { t } = useTranslation();
 
   function skip() {
     completeOnboarding();
@@ -39,16 +42,16 @@ export default function LandingPage() {
         />
       </div>
 
+      <div className="relative z-10 flex items-center justify-end">
+        <LanguageSwitcher />
+      </div>
+
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center">
-        {/* <div className="absolute inset-0 bg-black/10" /> */}
         <h2 className="text-sm font-semibold tracking-[0.3em] text-[var(--weeggo-orange)] ">
-          BIENVENIDOS A
+          {t("landing.welcomeTo")}
         </h2>
 
-        <Logo className="justify-center text-6xl mb-6" />
-        <h2 className="text-xl font-semibold tracking-[0.3em] text-[var(--weeggo-orange)] mb-4">
-          HOME 
-        </h2>
+        <Logo height={48} className="mb-6 mt-2" />
 
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -58,8 +61,8 @@ export default function LandingPage() {
         >
           {
             visitorName
-              ? `Hola de nuevo, ${visitorName}`
-              : "Una nueva forma de encontrar lo que buscas"
+              ? t("landing.headlineReturning", { name: visitorName })
+              : t("landing.headline")
           }
         </motion.h1>
 
@@ -69,8 +72,7 @@ export default function LandingPage() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mx-auto mt-4 max-w-[280px] text-[14px] leading-relaxed text-muted-foreground"
         >
-          Cuentale a nuestro asistente lo que estas buscando y te armaremos una selección de propiedades a tu medida.
-         
+          {t("landing.tagline")}
         </motion.p>
 
         <motion.div
@@ -79,10 +81,10 @@ export default function LandingPage() {
           transition={{ delay: 0.3, duration: 0.5 }}
           className="mt-8 flex gap-3"
         >
-          <FeatureBadge icon={Home} label="Comprar" color="var(--weeggo-blue)" />
-          <FeatureBadge icon={Key} label="Alquilar" color="var(--weeggo-green)" />
-          <FeatureBadge icon={DollarSign} label="Vender" color="var(--weeggo-red)" />
-          <FeatureBadge icon={TrendingUp} label="Invertir" color="var(--weeggo-orange)" />
+          <FeatureBadge icon={Home} label={t("landing.badgeBuy")} color="var(--weeggo-blue)" />
+          <FeatureBadge icon={Key} label={t("landing.badgeRent")} color="var(--weeggo-green)" />
+          <FeatureBadge icon={DollarSign} label={t("landing.badgeSell")} color="var(--weeggo-red)" />
+          <FeatureBadge icon={TrendingUp} label={t("landing.badgeInvest")} color="var(--weeggo-orange)" />
         </motion.div>
       </div>
 
@@ -96,12 +98,12 @@ export default function LandingPage() {
           type="button"
           onClick={() => router.push("/wizard")}
           className="w-full max-w-[320px] rounded-[var(--weeggo-radius-md)] py-[15px] text-[14px] font-bold text-white shadow-[0_10px_24px_-8px_rgba(79,70,229,0.45)] bg-[var(--weeggo-orange)] hover:bg-[var(--weeggo-orange-2)] active:bg-[var(--weeggo-orange-2)]"
-          
+
         >
-          Comenzar
+          {t("landing.ctaStart")}
         </button>
         <button type="button" onClick={skip} className="text-xs font-semibold text-muted-foreground mb-4 underline">
-          salteate el asistente 
+          {t("landing.ctaSkip")}
         </button>
       </motion.div>
     </motion.div>

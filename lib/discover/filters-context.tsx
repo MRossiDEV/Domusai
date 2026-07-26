@@ -12,6 +12,8 @@ import {
 
 import { createEmptyFilters, type AppNotification, type Filters, type Mode } from "./types";
 
+export type Locale = "es" | "en";
+
 interface PersistedState {
   mode: Mode;
   filters: Filters;
@@ -29,6 +31,8 @@ interface PersistedState {
    * carries its own name field.
    */
   visitorName: string;
+  /** Public-app UI language. Defaults to "es" (Uruguay market); "en" is opt-in via the language switcher. Doesn't affect the admin/agent CRM, which stays Spanish-only. */
+  locale: Locale;
 }
 
 interface DiscoverState extends PersistedState {
@@ -45,6 +49,7 @@ const initialPersistedState: PersistedState = {
   notifications: [],
   onboarded: false,
   visitorName: "",
+  locale: "es",
 };
 
 const initialState: DiscoverState = {
@@ -63,6 +68,7 @@ type Action =
   | { type: "MARK_NOTIFICATIONS_READ" }
   | { type: "COMPLETE_ONBOARDING" }
   | { type: "SET_VISITOR_NAME"; name: string }
+  | { type: "SET_LOCALE"; locale: Locale }
   | { type: "RESET" }
   | { type: "HYDRATE"; state: Partial<PersistedState> | null };
 
@@ -86,6 +92,7 @@ function mergePersistedState(partial: Partial<PersistedState> | null): Persisted
     notifications: Array.isArray(safe.notifications) ? safe.notifications : [],
     onboarded: safe.onboarded ?? initialPersistedState.onboarded,
     visitorName: typeof safe.visitorName === "string" ? safe.visitorName : "",
+    locale: safe.locale === "en" ? "en" : "es",
   };
 }
 
@@ -147,8 +154,14 @@ function reducer(state: DiscoverState, action: Action): DiscoverState {
     case "SET_VISITOR_NAME":
       return { ...state, visitorName: action.name };
 
+    case "SET_LOCALE":
+      return { ...state, locale: action.locale };
+
     case "RESET":
-      return { ...initialPersistedState, hydrated: true };
+      // Language is a stickier preference than everything else here — a
+      // "start over" on the wizard/filters shouldn't also flip the UI back
+      // to the default language.
+      return { ...initialPersistedState, locale: state.locale, hydrated: true };
 
     case "HYDRATE":
       return { ...mergePersistedState(action.state), hydrated: true };
@@ -172,12 +185,10 @@ interface DiscoverContextValue extends DiscoverState {
   unreadNotificationCount: number;
   completeOnboarding: () => void;
   setVisitorName: (name: string) => void;
+  setLocale: (locale: Locale) => void;
   reset: () => void;
 
   // Ephemeral UI state — not persisted, so a page refresh always starts closed.
-  wizardOpen: boolean;
-  openWizard: () => void;
-  closeWizard: () => void;
   activeListingId: string | null;
   openListing: (id: string) => void;
   closeListing: () => void;
@@ -191,7 +202,6 @@ const DiscoverContext = createContext<DiscoverContextValue | null>(null);
 export function DiscoverProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [wizardOpen, setWizardOpen] = useState(false);
   const [activeListingId, setActiveListingId] = useState<string | null>(null);
   const [compareOpen, setCompareOpen] = useState(false);
 
@@ -218,6 +228,7 @@ export function DiscoverProvider({ children }: { children: ReactNode }) {
       notifications: state.notifications,
       onboarded: state.onboarded,
       visitorName: state.visitorName,
+      locale: state.locale,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
   }, [state]);
@@ -236,11 +247,9 @@ export function DiscoverProvider({ children }: { children: ReactNode }) {
       unreadNotificationCount: state.notifications.filter((n) => !n.read).length,
       completeOnboarding: () => dispatch({ type: "COMPLETE_ONBOARDING" }),
       setVisitorName: (name) => dispatch({ type: "SET_VISITOR_NAME", name }),
+      setLocale: (locale) => dispatch({ type: "SET_LOCALE", locale }),
       reset: () => dispatch({ type: "RESET" }),
 
-      wizardOpen,
-      openWizard: () => setWizardOpen(true),
-      closeWizard: () => setWizardOpen(false),
       activeListingId,
       openListing: (id) => setActiveListingId(id),
       closeListing: () => setActiveListingId(null),
@@ -248,7 +257,7 @@ export function DiscoverProvider({ children }: { children: ReactNode }) {
       openCompare: () => setCompareOpen(true),
       closeCompare: () => setCompareOpen(false),
     }),
-    [state, wizardOpen, activeListingId, compareOpen]
+    [state, activeListingId, compareOpen]
   );
 
   return <DiscoverContext.Provider value={value}>{children}</DiscoverContext.Provider>;

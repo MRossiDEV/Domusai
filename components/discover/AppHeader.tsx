@@ -6,48 +6,51 @@ import { CircleUserRound } from "lucide-react";
 import { useDiscover } from "@/lib/discover/filters-context";
 import type { Mode } from "@/lib/discover/types";
 import { Logo } from "@/components/Logo";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
-const MODES: { value: Mode; label: string }[] = [
-  { value: "buy", label: "Buy" },
-  { value: "rent", label: "Rent" },
-  { value: "invest", label: "Invest" },
-];
+const MODES: Mode[] = ["buy", "rent", "invest"];
 
 export function AppHeader() {
   const { mode, setMode } = useDiscover();
+  const { t } = useTranslation();
 
   return (
-    <header className="shrink-0 border-b border-border bg-card px-5 pt-5 pb-3 safe-top">
-      <div className="mb-4 flex items-center justify-between">
+    <header className="shrink-0 border-b border-border bg-card py-2 px-4 safe-top">
+      <div className="mt-1 mb-2 flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <Logo className="text-[21px]" />
+          <Logo height={27} />
         </Link>
 
-        <Link
-          href="/profile"
-          aria-label="Profile"
-          className="flex size-[38px] items-center justify-center rounded-full bg-secondary text-foreground"
-        >
-          <CircleUserRound className="size-[18px]" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+
+          <Link
+            href="/profile"
+            aria-label={t("nav.profile")}
+            className="flex size-[38px] items-center justify-center rounded-full bg-secondary text-foreground"
+          >
+            <CircleUserRound className="size-[18px]" />
+          </Link>
+        </div>
       </div>
 
-      <div className="flex gap-0.5 rounded-full bg-secondary p-1">
+      {/* <div className="flex gap-0.5 rounded-full bg-secondary p-1">
         {MODES.map((m) => (
           <button
-            key={m.value}
+            key={m}
             type="button"
-            onClick={() => setMode(m.value)}
+            onClick={() => setMode(m)}
             className={`flex-1 rounded-full px-1 py-2.5 text-[12.5px] font-bold tracking-wide transition-colors ${
-              mode === m.value
+              mode === m
                 ? "bg-card text-primary shadow-[0_3px_10px_-3px_rgba(79,70,229,0.35)]"
                 : "text-muted-foreground"
             }`}
           >
-            {m.label}
+            {t(`common.${m}`)}
           </button>
         ))}
-      </div>
+      </div> */}
     </header>
   );
 }

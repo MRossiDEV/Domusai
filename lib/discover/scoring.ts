@@ -1,5 +1,8 @@
 import type { Filters, Listing, Mode } from "./types";
 import { LIFESTYLES } from "./constants";
+import type { TranslationKey } from "@/lib/i18n/useTranslation";
+
+type T = (key: TranslationKey, vars?: Record<string, string | number>) => string;
 
 /** A listing up to 8% over budget still shows, scored lower — instead of a hard cliff at the cap. */
 const BUDGET_GRACE = 0.08;
@@ -14,9 +17,9 @@ export function fmtUSD(n: number): string {
   return "$" + n.toLocaleString("en-US");
 }
 
-export function priceFor(listing: Listing, mode: Mode): string {
+export function priceFor(listing: Listing, mode: Mode, t: T): string {
   if (mode === "rent") {
-    return listing.rentPrice !== null ? `${fmtUSD(listing.rentPrice)}/mo` : "Rent on request";
+    return listing.rentPrice !== null ? `${fmtUSD(listing.rentPrice)}${t("discover.perMonth")}` : t("discover.rentOnRequest");
   }
   return fmtUSD(listing.price);
 }
@@ -151,16 +154,16 @@ export function sortByMatch(listings: Listing[], filters: Filters, mode: Mode): 
   return [...listings].sort((a, b) => matchScore(b, filters, mode) - matchScore(a, filters, mode));
 }
 
-export function propertyTypeLabel(type: Listing["propertyType"]): string {
+export function propertyTypeLabel(type: Listing["propertyType"], t: T): string {
   switch (type) {
     case "apartment":
-      return "Apartment";
+      return t("discover.typeApartment");
     case "house":
-      return "House";
+      return t("discover.typeHouse");
     case "ph":
-      return "PH";
+      return t("discover.typePh");
     case "loft":
-      return "Loft";
+      return t("discover.typeLoft");
     default:
       return type;
   }
