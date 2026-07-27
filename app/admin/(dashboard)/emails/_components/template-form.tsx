@@ -37,7 +37,7 @@ export function TemplateForm({
         Volver a Emails
       </Link>
 
-      <FieldGroup className="max-w-2xl">
+      <FieldGroup className="max-w-2xl rounded-xl border border-border bg-card p-6">
         <Field>
           <FieldLabel htmlFor="name">Nombre</FieldLabel>
           <FieldContent>

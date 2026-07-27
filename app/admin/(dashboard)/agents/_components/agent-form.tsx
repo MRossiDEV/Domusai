@@ -37,6 +37,7 @@ export function AgentForm({
   agent?: Agent;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
+  const roleItems = Object.fromEntries(roleOptions.map((o) => [o.value, o.label]));
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
@@ -48,7 +49,7 @@ export function AgentForm({
         Volver a Agentes
       </Link>
 
-      <FieldGroup className="max-w-xl">
+      <FieldGroup className="max-w-xl rounded-xl border border-border bg-card p-6">
         <Field>
           <FieldLabel htmlFor="name">Nombre</FieldLabel>
           <FieldContent>
@@ -76,7 +77,7 @@ export function AgentForm({
           <Field>
             <FieldLabel htmlFor="role">Rol</FieldLabel>
             <FieldContent>
-              <Select name="role" defaultValue={agent?.role ?? "agent"}>
+              <Select name="role" items={roleItems} defaultValue={agent?.role ?? "agent"}>
                 <SelectTrigger id="role" className="w-full">
                   <SelectValue />
                 </SelectTrigger>

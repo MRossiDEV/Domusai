@@ -20,7 +20,7 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
 
   return (
     <form action={formAction} className="max-w-xl">
-      <FieldGroup>
+      <FieldGroup className="rounded-xl border border-border bg-card p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field>
             <FieldLabel htmlFor="contactEmail">Email de contacto</FieldLabel>

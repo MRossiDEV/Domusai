@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { agentsStore } from "@/app/admin/_lib/store";
 import type { AgentRole } from "@/app/admin/_lib/types";
+import { sendAccountInviteEmail } from "@/lib/email/invite-email";
 
 export interface AgentFormState {
   error?: string;
@@ -31,7 +32,8 @@ export async function createAgentAction(
   const parsed = parseAgentForm(formData);
   if ("error" in parsed) return { error: parsed.error };
 
-  await agentsStore.create(parsed.data);
+  const agent = await agentsStore.create(parsed.data);
+  await sendAccountInviteEmail("agent", agent.id, agent.name, agent.email);
   revalidatePath("/admin/agents");
   revalidatePath("/admin");
   redirect("/admin/agents");

@@ -176,6 +176,12 @@ export interface Dictionary {
     passed: string;
     startOver: string;
   };
+
+  error: {
+    title: string;
+    body: string;
+    retry: string;
+  };
 }
 
 const es: Dictionary = {
@@ -348,6 +354,12 @@ const es: Dictionary = {
     passed: "Descartadas",
     startOver: "Volver a empezar desde cero",
   },
+
+  error: {
+    title: "Algo salió mal",
+    body: "No pudimos cargar esta pantalla. Probá de nuevo en un momento.",
+    retry: "Intentar de nuevo",
+  },
 };
 
 const en: Dictionary = {
@@ -518,6 +530,12 @@ const en: Dictionary = {
     shortlisted: "Shortlisted",
     passed: "Passed",
     startOver: "Start over from the beginning",
+  },
+
+  error: {
+    title: "Something went wrong",
+    body: "We couldn't load this screen. Try again in a moment.",
+    retry: "Try again",
   },
 };
 

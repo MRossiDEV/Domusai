@@ -20,6 +20,7 @@ const sectionLabels: Record<string, string> = {
   properties: "Propiedades",
   leads: "Leads",
   agents: "Agentes",
+  partners: "Partners",
   emails: "Emails",
   settings: "Configuración",
   new: "Nuevo",

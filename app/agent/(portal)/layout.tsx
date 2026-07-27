@@ -2,16 +2,18 @@ import type { Metadata } from "next";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 import { AgentSidebar } from "@/app/agent/_components/agent-sidebar";
 import { AgentHeader } from "@/app/agent/_components/agent-header";
 import { getCurrentAgent } from "@/app/agent/_lib/session";
-import { signOutAction } from "@/app/agent/_lib/actions";
+import { getCurrentAdmin } from "@/app/admin/_lib/session";
+import { signOutAgentAction } from "@/app/agent/_lib/actions/auth";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: {
     default: "Portal de Agentes",
-    template: "%s | DOMUSAI Agentes",
+    template: "%s | WEEGGO Agentes",
   },
   robots: { index: false, follow: false },
 };
@@ -21,7 +23,8 @@ export default async function AgentPortalLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const result = await getCurrentAgent();
+  const [result, admin] = await Promise.all([getCurrentAgent(), getCurrentAdmin()]);
+  const isImpersonating = admin.status === "ok";
 
   if (result.status === "unauthenticated") {
     redirect("/agent/login");
@@ -35,7 +38,7 @@ export default async function AgentPortalLayout({
             ? "Este email no está registrado como agente. Contactá a tu administrador."
             : "Tu cuenta de agente está desactivada. Contactá a tu administrador."}
         </p>
-        <form action={signOutAction}>
+        <form action={signOutAgentAction}>
           <Button type="submit" variant="outline">
             Cerrar sesión
           </Button>
@@ -48,6 +51,7 @@ export default async function AgentPortalLayout({
     <SidebarProvider>
       <AgentSidebar agentName={result.agent.name} />
       <SidebarInset>
+        {isImpersonating && <ImpersonationBanner />}
         <AgentHeader />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </SidebarInset>

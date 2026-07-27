@@ -24,7 +24,7 @@ export function StatCard({
         <p className="text-sm text-muted-foreground">{label}</p>
         <Icon className="size-4 text-accent" />
       </div>
-      <p className="mt-3 font-serif text-3xl text-foreground">{value}</p>
+      <p className="font-weeggo-mono mt-3 text-3xl font-bold text-foreground">{value}</p>
     </div>
   );
 }

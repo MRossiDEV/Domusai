@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Building2,
+  Handshake,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -25,12 +27,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { signOutAdminAction } from "@/app/admin/_lib/actions/auth";
+import { Logo } from "@/components/Logo";
 
 const navItems = [
   { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { title: "Propiedades", href: "/admin/properties", icon: Building2 },
   { title: "Leads", href: "/admin/leads", icon: Users },
   { title: "Agentes", href: "/admin/agents", icon: UserCog },
+  { title: "Partners", href: "/admin/partners", icon: Handshake },
   { title: "Emails", href: "/admin/emails", icon: Mail },
   { title: "Configuración", href: "/admin/settings", icon: Settings },
 ];
@@ -41,10 +45,15 @@ export function AppSidebar({ adminName }: { adminName: string }) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link href="/admin" className="flex items-center gap-2 px-2 py-1.5">
-          <span className="font-serif text-lg tracking-wide text-foreground">
-            WEEG<span className="text-accent">GO</span>
-          </span>
+        <Link href="/admin" className="flex items-center px-2 py-1.5">
+          <Logo height={20} className="group-data-[collapsible=icon]:hidden" />
+          <Image
+            src="/images/brand/weeggo-icon.svg"
+            alt="WEEGGO"
+            width={20}
+            height={20}
+            className="hidden group-data-[collapsible=icon]:block"
+          />
         </Link>
       </SidebarHeader>
 

@@ -25,7 +25,7 @@ type PublicPropertyRow = {
   description: string;
   bedrooms: number;
   area_m2: number;
-  badge: string | null;
+  badges: string[] | null;
   tags: string[];
   cover_image_url: string;
 };
@@ -45,7 +45,7 @@ async function getPublicAgent(slug: string) {
 async function getAgentProperties(agentId: string) {
   const { data, error } = await supabasePublic
     .from("weeggo_properties")
-    .select("title, city, description, bedrooms, area_m2, badge, tags, cover_image_url")
+    .select("title, city, description, bedrooms, area_m2, badges, tags, cover_image_url")
     .eq("agent_id", agentId)
     .eq("status", "published")
     .order("created_at", { ascending: false });
@@ -170,7 +170,7 @@ export default async function PublicAgentProfilePage({
                 image={property.cover_image_url}
                 city={property.city}
                 title={property.title}
-                badge={property.badge ?? ""}
+                badges={property.badges ?? []}
                 description={property.description}
                 specs={`${property.bedrooms} Dormitorios • ${property.area_m2} m²`}
                 tags={property.tags ?? []}

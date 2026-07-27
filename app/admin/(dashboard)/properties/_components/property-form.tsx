@@ -1,15 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 
-import type { Property, PropertyStatus, PropertyType } from "@/app/admin/_lib/types";
+import type { Agent, Partner, Property, PropertyStatus, PropertyType } from "@/app/admin/_lib/types";
 import type { PropertyFormState } from "@/app/admin/_lib/actions/properties";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -25,6 +26,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { AMENITIES, BADGES, CITIES, DEPARTMENTS, NEIGHBORHOODS, PROPERTY_TYPES } from "@/lib/discover/constants";
 
 const statusOptions: { value: PropertyStatus; label: string }[] = [
   { value: "draft", label: "Borrador" },
@@ -32,21 +34,38 @@ const statusOptions: { value: PropertyStatus; label: string }[] = [
   { value: "off-market", label: "Fuera de mercado" },
 ];
 
-const propertyTypeOptions: { value: PropertyType; label: string }[] = [
-  { value: "apartment", label: "Apartamento" },
-  { value: "house", label: "Casa" },
-  { value: "ph", label: "PH" },
-  { value: "loft", label: "Loft" },
-];
+const propertyTypeOptions: { value: PropertyType; label: string }[] = PROPERTY_TYPES;
 
 export function PropertyForm({
   action,
   property,
+  agents,
+  partners,
 }: {
   action: (state: PropertyFormState, formData: FormData) => Promise<PropertyFormState>;
   property?: Property;
+  agents: Agent[];
+  partners: Partner[];
 }) {
   const [state, formAction, pending] = useActionState(action, {});
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(property?.images ?? []);
+
+  // Base UI's <Select.Value> only shows the matched item's *label* when the
+  // root is given an explicit `items` map — without it, it falls back to
+  // rendering the raw `value` (e.g. an agent's UUID instead of their name).
+  const departmentItems = Object.fromEntries(DEPARTMENTS.map((dept) => [dept, dept]));
+  const localityItems = Object.fromEntries(CITIES.map((city) => [city, city]));
+  const cityItems = Object.fromEntries(NEIGHBORHOODS.map((hood) => [hood, hood]));
+  const propertyTypeItems = Object.fromEntries(propertyTypeOptions.map((o) => [o.value, o.label]));
+  const statusItems = Object.fromEntries(statusOptions.map((o) => [o.value, o.label]));
+  const agentItems = {
+    none: "Sin asignar",
+    ...Object.fromEntries(agents.map((agent) => [agent.id, agent.name])),
+  };
+  const partnerItems = {
+    none: "Directo / sin partner",
+    ...Object.fromEntries(partners.map((partner) => [partner.id, partner.name])),
+  };
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
@@ -58,19 +77,76 @@ export function PropertyForm({
         Volver a Propiedades
       </Link>
 
-      <FieldGroup className="max-w-2xl">
+      <FieldGroup className="max-w-2xl rounded-xl border border-border bg-card p-6">
+        <Field>
+          <FieldLabel htmlFor="title">Título</FieldLabel>
+          <FieldContent>
+            <Input id="title" name="title" defaultValue={property?.title} required />
+          </FieldContent>
+        </Field>
+
         <div className="grid gap-4 sm:grid-cols-2">
           <Field>
-            <FieldLabel htmlFor="title">Título</FieldLabel>
+            <FieldLabel htmlFor="country">País</FieldLabel>
             <FieldContent>
-              <Input id="title" name="title" defaultValue={property?.title} required />
+              <Input id="country" name="country" defaultValue={property?.country ?? "Uruguay"} required />
             </FieldContent>
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="city">Ciudad</FieldLabel>
+            <FieldLabel htmlFor="department">Departamento</FieldLabel>
             <FieldContent>
-              <Input id="city" name="city" defaultValue={property?.city} required />
+              <Select name="department" items={departmentItems} defaultValue={property?.department ?? undefined}>
+                <SelectTrigger id="department" className="w-full">
+                  <SelectValue placeholder="Seleccioná un departamento" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DEPARTMENTS.map((dept) => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldContent>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="locality">Ciudad</FieldLabel>
+            <FieldContent>
+              <Select name="locality" items={localityItems} defaultValue={property?.locality ?? undefined}>
+                <SelectTrigger id="locality" className="w-full">
+                  <SelectValue placeholder="Seleccioná una ciudad" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CITIES.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldContent>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="city">Barrio</FieldLabel>
+            <FieldContent>
+              <Select name="city" items={cityItems} defaultValue={property?.city}>
+                <SelectTrigger id="city" className="w-full">
+                  <SelectValue placeholder="Seleccioná un barrio" />
+                </SelectTrigger>
+                <SelectContent>
+                  {NEIGHBORHOODS.map((hood) => (
+                    <SelectItem key={hood} value={hood}>
+                      {hood}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldDescription>
+                Tiene que ser uno de los barrios reconocidos por los filtros de Explorar.
+              </FieldDescription>
             </FieldContent>
           </Field>
         </div>
@@ -88,22 +164,72 @@ export function PropertyForm({
           </FieldContent>
         </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field>
-            <FieldLabel htmlFor="image">URL de imagen</FieldLabel>
-            <FieldContent>
-              <Input id="image" name="image" defaultValue={property?.image} required />
-              <FieldDescription>Ej: /images/property-1.png</FieldDescription>
-            </FieldContent>
-          </Field>
+        <Field>
+          <FieldLabel htmlFor="image">URL de imagen de portada</FieldLabel>
+          <FieldContent>
+            <Input id="image" name="image" defaultValue={property?.image} required />
+            <FieldDescription>Ej: /images/property-1.png</FieldDescription>
+          </FieldContent>
+        </Field>
 
-          <Field>
-            <FieldLabel htmlFor="badge">Badge</FieldLabel>
-            <FieldContent>
-              <Input id="badge" name="badge" defaultValue={property?.badge} />
-            </FieldContent>
-          </Field>
-        </div>
+        <Field>
+          <FieldLabel>Badges</FieldLabel>
+          <FieldContent>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+              {BADGES.map((badge) => (
+                <label key={badge} className="flex items-center gap-2 text-sm text-foreground">
+                  <Checkbox name="badges" value={badge} defaultChecked={property?.badges.includes(badge)} />
+                  {badge}
+                </label>
+              ))}
+            </div>
+            <FieldDescription>Etiquetas de marketing — solo se muestran, no filtran búsquedas.</FieldDescription>
+          </FieldContent>
+        </Field>
+
+        <Field>
+          <FieldLabel>Galería adicional</FieldLabel>
+          <FieldContent>
+            <div className="flex flex-col gap-2">
+              {galleryUrls.map((url, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    name="images"
+                    value={url}
+                    onChange={(event) => {
+                      const next = [...galleryUrls];
+                      next[index] = event.target.value;
+                      setGalleryUrls(next);
+                    }}
+                    placeholder="https://..."
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setGalleryUrls(galleryUrls.filter((_, i) => i !== index))}
+                  >
+                    <X />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-fit"
+                onClick={() => setGalleryUrls([...galleryUrls, ""])}
+              >
+                <Plus />
+                Agregar imagen
+              </Button>
+            </div>
+            <FieldDescription>
+              Fotos adicionales más allá de la portada — se muestran en este orden en el detalle de la
+              propiedad.
+            </FieldDescription>
+          </FieldContent>
+        </Field>
 
         <div className="grid gap-4 sm:grid-cols-4">
           <Field>
@@ -146,7 +272,7 @@ export function PropertyForm({
           <Field>
             <FieldLabel htmlFor="propertyType">Tipo de propiedad</FieldLabel>
             <FieldContent>
-              <Select name="propertyType" defaultValue={property?.propertyType ?? "apartment"}>
+              <Select name="propertyType" items={propertyTypeItems} defaultValue={property?.propertyType ?? "apartment"}>
                 <SelectTrigger id="propertyType" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -170,9 +296,20 @@ export function PropertyForm({
         </div>
 
         <Field>
-          <FieldLabel htmlFor="tags">Tags (separados por coma)</FieldLabel>
+          <FieldLabel>Comodidades</FieldLabel>
           <FieldContent>
-            <Input id="tags" name="tags" defaultValue={property?.tags.join(", ")} />
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+              {AMENITIES.map((amenity) => (
+                <label key={amenity} className="flex items-center gap-2 text-sm text-foreground">
+                  <Checkbox name="tags" value={amenity} defaultChecked={property?.tags.includes(amenity)} />
+                  {amenity}
+                </label>
+              ))}
+            </div>
+            <FieldDescription>
+              Estas son las que alimentan los filtros de comodidades en Explorar — un tag libre no
+              coincidiría con ningún filtro.
+            </FieldDescription>
           </FieldContent>
         </Field>
 
@@ -180,7 +317,7 @@ export function PropertyForm({
           <Field>
             <FieldLabel htmlFor="status">Estado</FieldLabel>
             <FieldContent>
-              <Select name="status" defaultValue={property?.status ?? "draft"}>
+              <Select name="status" items={statusItems} defaultValue={property?.status ?? "draft"}>
                 <SelectTrigger id="status" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -200,6 +337,49 @@ export function PropertyForm({
               <FieldLabel htmlFor="featured">Destacada en portada</FieldLabel>
             </FieldContent>
             <Switch id="featured" name="featured" defaultChecked={property?.featured} />
+          </Field>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field>
+            <FieldLabel htmlFor="agentId">Agente asignado</FieldLabel>
+            <FieldContent>
+              <Select name="agentId" items={agentItems} defaultValue={property?.agentId ?? "none"}>
+                <SelectTrigger id="agentId" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sin asignar</SelectItem>
+                  {agents.map((agent) => (
+                    <SelectItem key={agent.id} value={agent.id}>
+                      {agent.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldContent>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="partnerId">Partner / realtor (lado vendedor)</FieldLabel>
+            <FieldContent>
+              <Select name="partnerId" items={partnerItems} defaultValue={property?.partnerId ?? "none"}>
+                <SelectTrigger id="partnerId" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Directo / sin partner</SelectItem>
+                  {partners.map((partner) => (
+                    <SelectItem key={partner.id} value={partner.id}>
+                      {partner.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldDescription>
+                La inmobiliaria o realtor externo del que vino esta propiedad, si corresponde.
+              </FieldDescription>
+            </FieldContent>
           </Field>
         </div>
 

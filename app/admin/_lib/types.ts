@@ -5,6 +5,12 @@ export type PropertyType = "apartment" | "house" | "ph" | "loft";
 export interface Property {
   id: string;
   title: string;
+  country: string;
+  /** Uruguayan department (Montevideo, Canelones, Maldonado, etc). Null if not set. */
+  department: string | null;
+  /** City/locality (Montevideo, Punta del Este, Colonia del Sacramento, etc). Null if not set. */
+  locality: string | null;
+  /** Despite the name, this is the neighborhood (Pocitos, Carrasco, etc), not the city — see `locality`. */
   city: string;
   description: string;
   price: number;
@@ -12,14 +18,21 @@ export interface Property {
   bedrooms: number;
   bathrooms: number;
   areaM2: number;
-  badge: string;
+  /** Marketing labels picked from a fixed list (see lib/discover/constants.ts BADGES). */
+  badges: string[];
   tags: string[];
   image: string;
+  /** Additional gallery photos beyond `image` (the cover), in display order. */
+  images: string[];
   status: PropertyStatus;
   featured: boolean;
   propertyType: PropertyType;
   /** Monthly rent estimate. Null when the property has no rental figure. */
   rentPrice: number | null;
+  /** Listing agent (WEEGGO staff). Null when unassigned. */
+  agentId: string | null;
+  /** External realtor/agency this listing came from. Null when direct/self-submitted. */
+  partnerId: string | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -58,6 +71,20 @@ export interface Agent {
   active: boolean;
   hasAccount: boolean;
   createdAt: number;
+}
+
+export interface Partner {
+  id: string;
+  name: string;
+  contactName?: string;
+  email?: string;
+  phone?: string;
+  notes?: string;
+  active: boolean;
+  /** Has completed their invite (set a password) and can actually log in to the partner portal. */
+  hasAccount: boolean;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface EmailTemplate {

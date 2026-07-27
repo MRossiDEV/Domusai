@@ -9,6 +9,7 @@ import type {
   LeadContactMethod,
   LeadSource,
   LeadStatus,
+  Partner,
   Property,
   PropertyStatus,
   PropertyType,
@@ -19,19 +20,43 @@ import type {
 export type PropertyRow = {
   id: string;
   title: string;
+  country: string;
+  department: string | null;
+  locality: string | null;
   city: string;
   description: string;
   price: number;
   bedrooms: number;
   bathrooms: number;
   area_m2: number;
-  badge: string | null;
+  badges: string[];
   tags: string[];
   cover_image_url: string;
   status: string;
   featured: boolean;
   property_type: string;
   rent_price: number | null;
+  agent_id: string | null;
+  partner_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PropertyImageRow = {
+  property_id: string;
+  url: string;
+  sort_order: number;
+};
+
+type PartnerRow = {
+  id: string;
+  name: string;
+  contact_name: string | null;
+  email: string | null;
+  phone: string | null;
+  notes: string | null;
+  active: boolean;
+  password_hash: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -61,6 +86,7 @@ export type AgentRow = {
   bio: string | null;
   active: boolean;
   user_id: string | null;
+  password_hash: string | null;
   created_at: string;
 };
 
@@ -124,10 +150,13 @@ function fromDbContactMethod(method: string): LeadContactMethod {
   }
 }
 
-export function mapProperty(row: PropertyRow): Property {
+export function mapProperty(row: PropertyRow, images: string[] = []): Property {
   return {
     id: row.id,
     title: row.title,
+    country: row.country,
+    department: row.department,
+    locality: row.locality,
     city: row.city,
     description: row.description,
     price: Number(row.price),
@@ -135,13 +164,31 @@ export function mapProperty(row: PropertyRow): Property {
     bedrooms: row.bedrooms,
     bathrooms: row.bathrooms,
     areaM2: Number(row.area_m2),
-    badge: row.badge ?? "",
+    badges: row.badges ?? [],
     tags: row.tags ?? [],
     image: row.cover_image_url,
+    images,
     status: fromDbPropertyStatus(row.status),
     featured: row.featured,
     propertyType: row.property_type as PropertyType,
     rentPrice: row.rent_price === null ? null : Number(row.rent_price),
+    agentId: row.agent_id,
+    partnerId: row.partner_id,
+    createdAt: new Date(row.created_at).getTime(),
+    updatedAt: new Date(row.updated_at).getTime(),
+  };
+}
+
+function mapPartner(row: PartnerRow): Partner {
+  return {
+    id: row.id,
+    name: row.name,
+    contactName: row.contact_name ?? undefined,
+    email: row.email ?? undefined,
+    phone: row.phone ?? undefined,
+    notes: row.notes ?? undefined,
+    active: row.active,
+    hasAccount: row.password_hash !== null,
     createdAt: new Date(row.created_at).getTime(),
     updatedAt: new Date(row.updated_at).getTime(),
   };
@@ -174,7 +221,10 @@ export function mapAgent(row: AgentRow): Agent {
     avatarUrl: row.avatar_url ?? undefined,
     bio: row.bio ?? undefined,
     active: row.active,
-    hasAccount: row.user_id !== null,
+    // Was "linked to a Supabase Auth user" back when agents signed in via
+    // magic-link; now that they're a direct password check against this
+    // table, "has an account" means "has completed their invite" instead.
+    hasAccount: row.password_hash !== null,
     createdAt: new Date(row.created_at).getTime(),
   };
 }
@@ -214,24 +264,94 @@ function assertNoError(error: { message: string } | null) {
   if (error) throw new Error(error.message);
 }
 
+/**
+ * Full delete-then-reinsert of a property's gallery, keyed on display order.
+ * Simple and correct for admin-form-scale writes (a handful of URLs at a
+ * time) — no need to diff individual rows.
+ */
+async function replacePropertyImages(propertyId: string, urls: string[]): Promise<void> {
+  const { error: deleteError } = await supabaseAdmin
+    .from("weeggo_property_images")
+    .delete()
+    .eq("property_id", propertyId);
+  assertNoError(deleteError);
+
+  if (urls.length === 0) return;
+
+  const { error: insertError } = await supabaseAdmin.from("weeggo_property_images").insert(
+    urls.map((url, index) => ({
+      property_id: propertyId,
+      url,
+      sort_order: index,
+    }))
+  );
+  assertNoError(insertError);
+}
+
+export interface PropertyListFilters {
+  status?: PropertyStatus;
+  propertyType?: PropertyType;
+  city?: string;
+  locality?: string;
+  department?: string;
+  agentId?: string;
+  partnerId?: string;
+}
+
 export const propertiesStore = {
-  async list(): Promise<Property[]> {
-    const { data, error } = await supabaseAdmin
+  async list(filters?: PropertyListFilters): Promise<Property[]> {
+    let query = supabaseAdmin
       .from("weeggo_properties")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (filters?.status) query = query.eq("status", toDbPropertyStatus(filters.status));
+    if (filters?.propertyType) query = query.eq("property_type", filters.propertyType);
+    if (filters?.city) query = query.eq("city", filters.city);
+    if (filters?.locality) query = query.eq("locality", filters.locality);
+    if (filters?.department) query = query.eq("department", filters.department);
+    if (filters?.agentId) query = query.eq("agent_id", filters.agentId);
+    if (filters?.partnerId) query = query.eq("partner_id", filters.partnerId);
+
+    const { data, error } = await query;
     assertNoError(error);
-    return (data as PropertyRow[]).map(mapProperty);
+    return (data as PropertyRow[]).map((row) => mapProperty(row));
   },
 
-  async get(id: string): Promise<Property | undefined> {
+  async listByPartner(partnerId: string): Promise<Property[]> {
     const { data, error } = await supabaseAdmin
       .from("weeggo_properties")
       .select("*")
-      .eq("id", id)
-      .maybeSingle();
+      .eq("partner_id", partnerId)
+      .order("created_at", { ascending: false });
     assertNoError(error);
-    return data ? mapProperty(data as PropertyRow) : undefined;
+    return (data as PropertyRow[]).map((row) => mapProperty(row));
+  },
+
+  async listByAgent(agentId: string): Promise<Property[]> {
+    const { data, error } = await supabaseAdmin
+      .from("weeggo_properties")
+      .select("*")
+      .eq("agent_id", agentId)
+      .order("created_at", { ascending: false });
+    assertNoError(error);
+    return (data as PropertyRow[]).map((row) => mapProperty(row));
+  },
+
+  async get(id: string): Promise<Property | undefined> {
+    const [{ data, error }, { data: imageRows, error: imagesError }] = await Promise.all([
+      supabaseAdmin.from("weeggo_properties").select("*").eq("id", id).maybeSingle(),
+      supabaseAdmin
+        .from("weeggo_property_images")
+        .select("property_id, url, sort_order")
+        .eq("property_id", id)
+        .order("sort_order", { ascending: true }),
+    ]);
+    assertNoError(error);
+    assertNoError(imagesError);
+    if (!data) return undefined;
+    const images = ((imageRows ?? []) as PropertyImageRow[]).map((row) => row.url);
+    return mapProperty(data as PropertyRow, images);
   },
 
   async create(data: Omit<Property, "id" | "createdAt" | "updatedAt">): Promise<Property> {
@@ -240,6 +360,9 @@ export const propertiesStore = {
       .insert({
         slug: generateSlug(data.title, "propiedad"),
         title: data.title,
+        country: data.country,
+        department: data.department,
+        locality: data.locality,
         city: data.city,
         description: data.description,
         price: data.price,
@@ -247,18 +370,22 @@ export const propertiesStore = {
         bedrooms: data.bedrooms,
         bathrooms: data.bathrooms,
         area_m2: data.areaM2,
-        badge: data.badge,
+        badges: data.badges,
         tags: data.tags,
         cover_image_url: data.image,
         status: toDbPropertyStatus(data.status),
         featured: data.featured,
         property_type: data.propertyType,
         rent_price: data.rentPrice,
+        agent_id: data.agentId,
+        partner_id: data.partnerId,
       })
       .select()
       .single();
     assertNoError(error);
-    return mapProperty(row as PropertyRow);
+    const property = row as PropertyRow;
+    await replacePropertyImages(property.id, data.images);
+    return mapProperty(property, data.images);
   },
 
   async update(
@@ -269,6 +396,9 @@ export const propertiesStore = {
       .from("weeggo_properties")
       .update({
         title: data.title,
+        country: data.country,
+        department: data.department,
+        locality: data.locality,
         city: data.city,
         description: data.description,
         price: data.price,
@@ -276,19 +406,23 @@ export const propertiesStore = {
         bedrooms: data.bedrooms,
         bathrooms: data.bathrooms,
         area_m2: data.areaM2,
-        badge: data.badge,
+        badges: data.badges,
         tags: data.tags,
         cover_image_url: data.image,
         status: toDbPropertyStatus(data.status),
         featured: data.featured,
         property_type: data.propertyType,
         rent_price: data.rentPrice,
+        agent_id: data.agentId,
+        partner_id: data.partnerId,
       })
       .eq("id", id)
       .select()
       .maybeSingle();
     assertNoError(error);
-    return row ? mapProperty(row as PropertyRow) : undefined;
+    if (!row) return undefined;
+    await replacePropertyImages(id, data.images);
+    return mapProperty(row as PropertyRow, data.images);
   },
 
   async remove(id: string): Promise<void> {
@@ -422,6 +556,70 @@ export const agentsStore = {
 
   async remove(id: string): Promise<void> {
     const { error } = await supabaseAdmin.from("weeggo_agents").delete().eq("id", id);
+    assertNoError(error);
+  },
+};
+
+export const partnersStore = {
+  async list(): Promise<Partner[]> {
+    const { data, error } = await supabaseAdmin
+      .from("weeggo_partners")
+      .select("*")
+      .order("name", { ascending: true });
+    assertNoError(error);
+    return (data as PartnerRow[]).map(mapPartner);
+  },
+
+  async get(id: string): Promise<Partner | undefined> {
+    const { data, error } = await supabaseAdmin
+      .from("weeggo_partners")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+    assertNoError(error);
+    return data ? mapPartner(data as PartnerRow) : undefined;
+  },
+
+  async create(data: Omit<Partner, "id" | "createdAt" | "updatedAt" | "hasAccount">): Promise<Partner> {
+    const { data: row, error } = await supabaseAdmin
+      .from("weeggo_partners")
+      .insert({
+        name: data.name,
+        contact_name: data.contactName || null,
+        email: data.email || null,
+        phone: data.phone || null,
+        notes: data.notes || null,
+        active: data.active,
+      })
+      .select()
+      .single();
+    assertNoError(error);
+    return mapPartner(row as PartnerRow);
+  },
+
+  async update(
+    id: string,
+    data: Omit<Partner, "id" | "createdAt" | "updatedAt" | "hasAccount">
+  ): Promise<Partner | undefined> {
+    const { data: row, error } = await supabaseAdmin
+      .from("weeggo_partners")
+      .update({
+        name: data.name,
+        contact_name: data.contactName || null,
+        email: data.email || null,
+        phone: data.phone || null,
+        notes: data.notes || null,
+        active: data.active,
+      })
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+    assertNoError(error);
+    return row ? mapPartner(row as PartnerRow) : undefined;
+  },
+
+  async remove(id: string): Promise<void> {
+    const { error } = await supabaseAdmin.from("weeggo_partners").delete().eq("id", id);
     assertNoError(error);
   },
 };

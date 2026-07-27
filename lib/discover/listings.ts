@@ -17,7 +17,7 @@ type PublishedPropertyRow = {
   property_type: PropertyType;
   tags: string[] | null;
   cover_image_url: string;
-  badge: string | null;
+  badges: string[] | null;
   featured: boolean;
 };
 
@@ -38,7 +38,7 @@ export const getPublishedListings = cache(async (): Promise<Listing[]> => {
       supabasePublic
         .from("weeggo_properties")
         .select(
-          "id, title, city, description, price, rent_price, bedrooms, bathrooms, area_m2, property_type, tags, cover_image_url, badge, featured"
+          "id, title, city, description, price, rent_price, bedrooms, bathrooms, area_m2, property_type, tags, cover_image_url, badges, featured"
         )
         .eq("status", "published")
         .order("featured", { ascending: false })
@@ -73,7 +73,7 @@ export const getPublishedListings = cache(async (): Promise<Listing[]> => {
     tags: row.tags ?? [],
     image: row.cover_image_url,
     images: [row.cover_image_url, ...(galleryByProperty.get(row.id) ?? [])],
-    badge: row.badge ?? "",
+    badges: row.badges ?? [],
     featured: row.featured,
   }));
 });

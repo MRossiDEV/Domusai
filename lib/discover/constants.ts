@@ -10,6 +10,67 @@ export const NEIGHBORHOODS = [
   "Buceo",
 ] as const;
 
+/** Uruguay's 19 departments — used for the admin property form's "Departamento" field. */
+export const DEPARTMENTS = [
+  "Artigas",
+  "Canelones",
+  "Cerro Largo",
+  "Colonia",
+  "Durazno",
+  "Flores",
+  "Florida",
+  "Lavalleja",
+  "Maldonado",
+  "Montevideo",
+  "Paysandú",
+  "Río Negro",
+  "Rivera",
+  "Rocha",
+  "Salto",
+  "San José",
+  "Soriano",
+  "Tacuarembó",
+  "Treinta y Tres",
+] as const;
+
+/**
+ * Cities/localities — one tier above department, distinct from NEIGHBORHOODS
+ * (which are all within Montevideo the city). Used for the admin property
+ * form's "Ciudad" field. Not exhaustive — trimmed to the localities actually
+ * relevant to WEEGGO's target market; add more as listings expand elsewhere.
+ */
+export const CITIES = [
+  "Montevideo",
+  "Ciudad de la Costa",
+  "Atlántida",
+  "Punta del Este",
+  "Maldonado",
+  "La Barra",
+  "Manantiales",
+  "José Ignacio",
+  "Piriápolis",
+  "Colonia del Sacramento",
+  "Carmelo",
+  "Canelones",
+  "Salto",
+  "Paysandú",
+  "Rivera",
+  "Tacuarembó",
+  "Melo",
+  "Rocha",
+  "La Paloma",
+  "Mercedes",
+  "Fray Bentos",
+  "Trinidad",
+  "Durazno",
+  "Florida",
+  "Minas",
+  "San José de Mayo",
+  "Artigas",
+  "Treinta y Tres",
+  "Chuy",
+] as const;
+
 export const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
   { value: "apartment", label: "Apartment" },
   { value: "house", label: "House" },
@@ -18,6 +79,18 @@ export const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
 ];
 
 export const AMENITIES = ["Parking", "Balcony", "Pet friendly", "Elevator", "Pool", "Doorman", "Renovated"];
+
+/** Marketing labels for the admin property form's "Badges" field — display only, not a filter dimension. */
+export const BADGES = [
+  "Nuevo",
+  "Exclusiva",
+  "Oportunidad",
+  "Precio rebajado",
+  "A estrenar",
+  "Con vista",
+  "Reservado",
+  "Últimas unidades",
+] as const;
 
 export const BUDGET_MAX_BUY = 650_000;
 export const BUDGET_MAX_RENT = 3_000;

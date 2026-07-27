@@ -28,7 +28,7 @@ export interface Listing {
   tags: string[];
   image: string;
   images: string[];
-  badge: string;
+  badges: string[];
   featured: boolean;
 }
 

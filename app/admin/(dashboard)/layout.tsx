@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { AppSidebar } from "@/app/admin/_components/app-sidebar";
 import { AdminHeader } from "@/app/admin/_components/admin-header";
+import { ThemeWeeggoScope } from "@/components/ThemeWeeggoScope";
 import { getCurrentAdmin } from "@/app/admin/_lib/session";
 import { signOutAdminAction } from "@/app/admin/_lib/actions/auth";
 
@@ -34,7 +35,7 @@ export default async function AdminLayout({
         : "This email isn't registered as an admin. Contact an existing admin to be added.";
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4 text-center">
+      <div className="theme-weeggo flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4 text-center">
         <p className="max-w-sm text-sm text-muted-foreground">{message}</p>
         <form action={signOutAdminAction}>
           <Button type="submit" variant="outline">
@@ -46,12 +47,15 @@ export default async function AdminLayout({
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar adminName={result.admin.name} />
-      <SidebarInset>
-        <AdminHeader />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="theme-weeggo">
+      <ThemeWeeggoScope />
+      <SidebarProvider>
+        <AppSidebar adminName={result.admin.name} />
+        <SidebarInset>
+          <AdminHeader />
+          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ type Props = {
   title: string;
   description: string;
   specs: string;
-  badge: string;
+  badges: string[];
   tags: string[];
   featured?: boolean;
 };
@@ -20,7 +20,7 @@ export default function PropertyCard({
   title,
   description,
   specs,
-  badge,
+  badges,
   tags,
   featured = false,
 }: Props) {
@@ -63,13 +63,22 @@ export default function PropertyCard({
 
       <div className="absolute inset-x-0 bottom-0 p-8 lg:p-10">
 
-        {/* Badge */}
+        {/* Badges */}
 
-        <div className="mb-6 inline-flex rounded-full border border-[#d7c3a0]/40 bg-[#d7c3a0]/10 px-4 py-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#d7c3a0]">
-            {badge}
-          </span>
-        </div>
+        {badges.length > 0 && (
+          <div className="mb-6 flex flex-wrap gap-2">
+            {badges.map((badge) => (
+              <div
+                key={badge}
+                className="inline-flex rounded-full border border-[#d7c3a0]/40 bg-[#d7c3a0]/10 px-4 py-2"
+              >
+                <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#d7c3a0]">
+                  {badge}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* City */}
 

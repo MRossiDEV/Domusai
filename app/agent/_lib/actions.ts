@@ -1,9 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { agentsStore } from "@/app/admin/_lib/store";
 import type { LeadStatus } from "@/app/admin/_lib/types";
 import { getCurrentAgent } from "@/app/agent/_lib/session";
@@ -13,10 +12,18 @@ export async function updateMyLeadStatusAction(formData: FormData) {
   const status = String(formData.get("status") ?? "") as LeadStatus;
   if (!id || !status) return;
 
-  const supabase = await createSupabaseServerClient();
-  // RLS (weeggo_leads_agent_update) enforces this only affects leads
-  // assigned to the signed-in agent.
-  const { error } = await supabase.from("weeggo_leads").update({ status }).eq("id", id);
+  const result = await getCurrentAgent();
+  if (result.status !== "ok") return;
+
+  // Explicit agent-id scoping in place of the RLS policy this used to lean
+  // on (weeggo_leads_agent_update, which depended on Supabase Auth's
+  // auth.uid() — no longer signed in that way) — supabaseAdmin bypasses RLS
+  // entirely, so this check IS the authorization now.
+  const { error } = await supabaseAdmin
+    .from("weeggo_leads")
+    .update({ status })
+    .eq("id", id)
+    .eq("assigned_agent_id", result.agent.id);
   if (error) throw new Error(error.message);
 
   revalidatePath("/agent/leads");
@@ -51,10 +58,4 @@ export async function updateMyProfileAction(
   revalidatePath("/agent/profile");
   revalidatePath("/agent");
   return { success: true };
-}
-
-export async function signOutAction() {
-  const supabase = await createSupabaseServerClient();
-  await supabase.auth.signOut();
-  redirect("/agent/login");
 }

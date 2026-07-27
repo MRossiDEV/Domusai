@@ -1,8 +1,14 @@
-const CACHE_NAME = "domusai-shell-v1";
+const CACHE_NAME = "weeggo-shell-v2";
 
 const APP_SHELL = [
   "/",
+  "/landing",
   "/wizard",
+  "/wizard/sell",
+  "/selection",
+  "/shortlist",
+  "/profile",
+  "/notifications",
   "/manifest.webmanifest",
 ];
 
@@ -32,8 +38,28 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// Staff-only surfaces (admin/agent dashboards, auth, and any API/action
+// routes) are intentionally never cached — they're auth-gated and always
+// need fresh data, so a stale offline copy would be actively misleading
+// (e.g. an agent working from an out-of-date lead list) rather than helpful.
+function isCacheable(url) {
+  if (url.origin !== self.location.origin) return false;
+  const path = url.pathname;
+  return (
+    !path.startsWith("/admin") &&
+    !path.startsWith("/agent") &&
+    !path.startsWith("/auth") &&
+    !path.startsWith("/api")
+  );
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  const url = new URL(event.request.url);
+  if (!isCacheable(url)) {
     return;
   }
 

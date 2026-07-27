@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { signOutAction } from "@/app/agent/_lib/actions";
+import { signOutAgentAction } from "@/app/agent/_lib/actions/auth";
 
 const navItems = [
   { title: "Dashboard", href: "/agent", icon: LayoutDashboard },
@@ -33,7 +33,7 @@ export function AgentSidebar({ agentName }: { agentName: string }) {
       <SidebarHeader>
         <Link href="/agent" className="flex items-center gap-2 px-2 py-1.5">
           <span className="font-serif text-lg tracking-wide text-foreground">
-            DOMUS<span className="text-accent">AI</span>
+            WEEG<span className="text-accent">GO</span>
           </span>
         </Link>
       </SidebarHeader>
@@ -68,7 +68,7 @@ export function AgentSidebar({ agentName }: { agentName: string }) {
       </SidebarContent>
 
       <SidebarFooter>
-        <form action={signOutAction}>
+        <form action={signOutAgentAction}>
           <SidebarMenuButton type="submit">
             <LogOut />
             <span>Cerrar sesión</span>

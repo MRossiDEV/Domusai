@@ -1,5 +1,7 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "./admin-session";
 
 export interface AdminSession {
   id: string;
@@ -21,57 +23,32 @@ export type CurrentAdminResult =
   | { status: "inactive" }
   | { status: "ok"; admin: AdminSession };
 
-// Resolves the signed-in Supabase Auth user to their weeggo_admins row,
-// auto-linking on first sign-in by matching verified email — same pattern as
-// app/agent/_lib/session.ts's getCurrentAgent(), against a separate table
-// (weeggo_admins is platform admins, weeggo_agents is real-estate agents).
+// Admin identity is checked once, at login (email+password against
+// weeggo_admins — see actions/auth.ts), then carried as a signed cookie
+// (app/admin/_lib/admin-session.ts) rather than a Supabase Auth session.
+// This just verifies that cookie and re-reads the row, so a deactivated or
+// deleted admin is caught on the very next request even with a still-valid
+// signature.
 export async function getCurrentAdmin(): Promise<CurrentAdminResult> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const cookieStore = await cookies();
+  const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+  const session = verifyAdminSessionToken(token);
 
-  if (!user) {
+  if (!session) {
     return { status: "unauthenticated" };
   }
 
-  const { data: linked, error: linkedError } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("weeggo_admins")
     .select("id, name, email, active")
-    .eq("user_id", user.id)
+    .eq("id", session.id)
     .maybeSingle();
 
-  if (linkedError) throw new Error(linkedError.message);
-
-  if (linked) {
-    const admin = linked as AdminSessionRow;
-    return admin.active ? { status: "ok", admin } : { status: "inactive" };
-  }
-
-  if (!user.email) {
+  if (error) throw new Error(error.message);
+  if (!data) {
     return { status: "unregistered" };
   }
 
-  const { data: unlinked, error: unlinkedError } = await supabaseAdmin
-    .from("weeggo_admins")
-    .select("id, name, email, active")
-    .eq("email", user.email)
-    .is("user_id", null)
-    .maybeSingle();
-
-  if (unlinkedError) throw new Error(unlinkedError.message);
-
-  if (!unlinked) {
-    return { status: "unregistered" };
-  }
-
-  const { error: updateError } = await supabaseAdmin
-    .from("weeggo_admins")
-    .update({ user_id: user.id })
-    .eq("id", unlinked.id);
-
-  if (updateError) throw new Error(updateError.message);
-
-  const admin = unlinked as AdminSessionRow;
+  const admin = data as AdminSessionRow;
   return admin.active ? { status: "ok", admin } : { status: "inactive" };
 }
